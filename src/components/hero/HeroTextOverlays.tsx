@@ -53,9 +53,10 @@ export function HeroTextOverlays({ progress }: HeroTextOverlaysProps) {
     );
   }
 
-  const headingClass =
-    "font-serif text-3xl sm:text-5xl lg:text-5xl xl:text-6xl font-normal text-[var(--ink)] tracking-tight leading-[1.08] mb-3";
-  const bodyClass = "text-sm sm:text-base xl:text-lg text-[var(--muted)] leading-relaxed";
+  // Copy sits on top of the full-bleed animation, so it uses near-black text with a light halo.
+  const halo = "[text-shadow:0_0_18px_rgba(234,225,210,0.95),0_1px_2px_rgba(234,225,210,0.9)]";
+  const headingClass = `font-serif text-3xl sm:text-5xl lg:text-5xl xl:text-6xl font-normal text-[#141412] tracking-tight leading-[1.08] mb-3 ${halo}`;
+  const bodyClass = `text-sm sm:text-base xl:text-lg font-medium text-[#2E2B26] leading-relaxed ${halo}`;
   const beatClass = "col-start-1 row-start-1";
 
   // All three beats share one grid cell, so the wrapper is as tall as the tallest beat.

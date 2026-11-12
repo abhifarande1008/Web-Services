@@ -110,74 +110,30 @@ export function ScrollHero({ frames }: ScrollHeroProps) {
 
       const dpr = cw / Math.max(1, canvas.clientWidth);
       const copy = copyRectRef.current;
-      const navH = 80 * dpr;
-      const transparent = `${BG_HEX}00`;
 
-      // The frame background is lighter than the page, so blend the top and bottom edges into it.
-      const featherVertical = (dy: number, dh: number) => {
-        const fade = dh * 0.25;
-        const top = ctx.createLinearGradient(0, dy, 0, dy + fade);
-        top.addColorStop(0, BG_HEX);
-        top.addColorStop(1, transparent);
-        ctx.fillStyle = top;
-        ctx.fillRect(0, dy - 1, cw, fade + 1);
-        const bottom = ctx.createLinearGradient(0, dy + dh - fade, 0, dy + dh);
-        bottom.addColorStop(0, transparent);
-        bottom.addColorStop(1, BG_HEX);
-        ctx.fillStyle = bottom;
-        ctx.fillRect(0, dy + dh - fade, cw, fade + 1);
-      };
+      // Full-bleed: cover the whole viewport.
+      const scale = Math.max(cw / sw, ch / sh);
+      const dw = sw * scale;
+      const dh = sh * scale;
+      ctx.drawImage(imageToDraw, 0, 0, sw, sh, (cw - dw) / 2, (ch - dh) / 2, dw, dh);
 
-      const isSplit = copy.right > 0 && copy.right * dpr < cw * 0.6;
-
-      if (isSplit) {
-        // Wide screens: text on the left, animation on the right. The frame tucks slightly under
-        // the text column (hidden by the fade below) so the dashboard gets as much room as possible.
-        const textEdge = copy.right * dpr;
-        const overlap = cw * 0.15;
-        const areaLeft = textEdge + 32 * dpr - overlap;
-        const areaW = cw - areaLeft;
-        const areaH = ch - navH - 24 * dpr;
-        const scale = Math.min(areaW / sw, areaH / sh);
-        const dw = sw * scale;
-        const dh = sh * scale;
-        const dx = areaLeft + (areaW - dw) / 2;
-        const dy = navH + (areaH - dh) / 2;
-        ctx.drawImage(imageToDraw, 0, 0, sw, sh, dx, dy, dw, dh);
-        featherVertical(dy, dh);
-
-        // Keep the text column on a plain background, then fade into the animation.
-        const solidTo = textEdge + 8 * dpr;
-        const fadeTo = solidTo + 140 * dpr;
-        ctx.fillStyle = BG_HEX;
-        ctx.fillRect(0, 0, solidTo, ch);
-        const side = ctx.createLinearGradient(solidTo, 0, fadeTo, 0);
-        side.addColorStop(0, BG_HEX);
-        side.addColorStop(1, transparent);
-        ctx.fillStyle = side;
-        ctx.fillRect(solidTo, 0, fadeTo - solidTo, ch);
-      } else if (cw < ch) {
-        // Portrait screens: the text sits at the top, so fit the frame into the space below it.
-        // Zoom past full width (trimming the side panels) so the centre dashboard stays readable.
-        const areaTop = (copy.bottom + 16) * dpr;
-        const areaBottom = ch - 56 * dpr;
-        const areaH = Math.max(ch * 0.3, areaBottom - areaTop);
-        const scale = Math.min((cw * 1.5) / sw, areaH / sh);
-        const dw = sw * scale;
-        const dh = sh * scale;
-        const dx = (cw - dw) / 2;
-        const dy = Math.min(areaTop + (areaH - dh) / 2, ch - dh);
-        ctx.drawImage(imageToDraw, 0, 0, sw, sh, dx, dy, dw, dh);
-        featherVertical(dy, dh);
-      } else {
-        // Short landscape screens (phones turned sideways): no room beside or below the text,
-        // so show the animation as a faint backdrop the text can sit on.
-        const scale = Math.max(cw / sw, ch / sh);
-        const dw = sw * scale;
-        const dh = sh * scale;
-        ctx.drawImage(imageToDraw, 0, 0, sw, sh, (cw - dw) / 2, (ch - dh) / 2, dw, dh);
-        ctx.fillStyle = `${BG_HEX}D9`;
-        ctx.fillRect(0, 0, cw, ch);
+      // Soft glow behind the text block only, so the copy stays readable over busy frames
+      // while the rest of the animation is untouched.
+      if (copy.right > copy.left && copy.bottom > copy.top) {
+        const cx = ((copy.left + copy.right) / 2) * dpr;
+        const cy = ((copy.top + copy.bottom) / 2) * dpr;
+        const rx = ((copy.right - copy.left) / 2 + 160) * dpr;
+        const ry = ((copy.bottom - copy.top) / 2 + 110) * dpr;
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.scale(1, ry / rx);
+        const glow = ctx.createRadialGradient(0, 0, 0, 0, 0, rx);
+        glow.addColorStop(0, `${BG_HEX}E6`);
+        glow.addColorStop(0.55, `${BG_HEX}C7`);
+        glow.addColorStop(1, `${BG_HEX}00`);
+        ctx.fillStyle = glow;
+        ctx.fillRect(-rx, -rx, rx * 2, rx * 2);
+        ctx.restore();
       }
     },
     [lastIndex]
