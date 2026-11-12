@@ -69,6 +69,12 @@ export default function RootLayout({
       className={`${fraunces.variable} ${inter.variable} scroll-smooth antialiased`}
     >
       <body className="min-h-screen bg-[var(--bg)] text-[var(--ink)] selection:bg-[var(--terracotta)] selection:text-[var(--surface)]">
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-[var(--ink)] focus:text-[var(--surface)] focus:text-sm"
+        >
+          Skip to content
+        </a>
         {children}
       </body>
     </html>

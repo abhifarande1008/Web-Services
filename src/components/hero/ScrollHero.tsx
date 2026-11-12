@@ -16,7 +16,6 @@ export function ScrollHero({ frames }: ScrollHeroProps) {
 
   const shouldReduceMotion = useReducedMotion();
 
-  // Scroll tracking across the 500vh wrapper
   const { scrollYProgress } = useScroll({
     target: wrapperRef,
     offset: ["start start", "end end"],
@@ -35,20 +34,8 @@ export function ScrollHero({ frames }: ScrollHeroProps) {
   const drawnSourceRef = useRef<number>(-1);
   const isMobileRef = useRef(false);
   const rafIdRef = useRef<number | null>(null);
-  // Bottom edge of the tallest hero text block, in CSS px from the top of the sticky viewport.
-  const copyBottomRef = useRef(0);
-
-  // 1. Reset scroll position on mount so load / refresh starts at the top
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      if ("scrollRestoration" in window.history) {
-        window.history.scrollRestoration = "manual";
-      }
-      if (!window.location.hash) {
-        window.scrollTo(0, 0);
-      }
-    }
-  }, []);
+  // Box around the hero text, in CSS px relative to the sticky viewport.
+  const copyRectRef = useRef({ top: 0, bottom: 0, left: 0, right: 0 });
 
   // Initialize storage for images
   useEffect(() => {
@@ -121,21 +108,58 @@ export function ScrollHero({ frames }: ScrollHeroProps) {
       const sw = nw * FRAME_CROP;
       const sh = nh * FRAME_CROP;
 
-      const isLandscape = cw >= ch;
+      const dpr = cw / Math.max(1, canvas.clientWidth);
+      const copy = copyRectRef.current;
+      const navH = 80 * dpr;
+      const transparent = `${BG_HEX}00`;
 
-      if (isLandscape) {
-        // Landscape screens: scale image to cover
-        const scale = Math.max(cw / sw, ch / sh);
+      // The frame background is lighter than the page, so blend the top and bottom edges into it.
+      const featherVertical = (dy: number, dh: number) => {
+        const fade = dh * 0.25;
+        const top = ctx.createLinearGradient(0, dy, 0, dy + fade);
+        top.addColorStop(0, BG_HEX);
+        top.addColorStop(1, transparent);
+        ctx.fillStyle = top;
+        ctx.fillRect(0, dy - 1, cw, fade + 1);
+        const bottom = ctx.createLinearGradient(0, dy + dh - fade, 0, dy + dh);
+        bottom.addColorStop(0, transparent);
+        bottom.addColorStop(1, BG_HEX);
+        ctx.fillStyle = bottom;
+        ctx.fillRect(0, dy + dh - fade, cw, fade + 1);
+      };
+
+      const isSplit = copy.right > 0 && copy.right * dpr < cw * 0.6;
+
+      if (isSplit) {
+        // Wide screens: text on the left, animation on the right. The frame tucks slightly under
+        // the text column (hidden by the fade below) so the dashboard gets as much room as possible.
+        const textEdge = copy.right * dpr;
+        const overlap = cw * 0.15;
+        const areaLeft = textEdge + 32 * dpr - overlap;
+        const areaW = cw - areaLeft;
+        const areaH = ch - navH - 24 * dpr;
+        const scale = Math.min(areaW / sw, areaH / sh);
         const dw = sw * scale;
         const dh = sh * scale;
-        const dx = (cw - dw) / 2;
-        const dy = (ch - dh) / 2;
+        const dx = areaLeft + (areaW - dw) / 2;
+        const dy = navH + (areaH - dh) / 2;
         ctx.drawImage(imageToDraw, 0, 0, sw, sh, dx, dy, dw, dh);
-      } else {
+        featherVertical(dy, dh);
+
+        // Keep the text column on a plain background, then fade into the animation.
+        const solidTo = textEdge + 8 * dpr;
+        const fadeTo = solidTo + 140 * dpr;
+        ctx.fillStyle = BG_HEX;
+        ctx.fillRect(0, 0, solidTo, ch);
+        const side = ctx.createLinearGradient(solidTo, 0, fadeTo, 0);
+        side.addColorStop(0, BG_HEX);
+        side.addColorStop(1, transparent);
+        ctx.fillStyle = side;
+        ctx.fillRect(solidTo, 0, fadeTo - solidTo, ch);
+      } else if (cw < ch) {
         // Portrait screens: the text sits at the top, so fit the frame into the space below it.
-        // Zoom slightly past full width (trimming the side panels) so the centre dashboard stays readable.
-        const dpr = cw / Math.max(1, canvas.clientWidth);
-        const areaTop = (copyBottomRef.current + 16) * dpr;
+        // Zoom past full width (trimming the side panels) so the centre dashboard stays readable.
+        const areaTop = (copy.bottom + 16) * dpr;
         const areaBottom = ch - 56 * dpr;
         const areaH = Math.max(ch * 0.3, areaBottom - areaTop);
         const scale = Math.min((cw * 1.5) / sw, areaH / sh);
@@ -144,19 +168,16 @@ export function ScrollHero({ frames }: ScrollHeroProps) {
         const dx = (cw - dw) / 2;
         const dy = Math.min(areaTop + (areaH - dh) / 2, ch - dh);
         ctx.drawImage(imageToDraw, 0, 0, sw, sh, dx, dy, dw, dh);
-
-        // The frame background is lighter than the page, so feather the top and bottom edges into it.
-        const fade = dh * 0.3;
-        const top = ctx.createLinearGradient(0, dy, 0, dy + fade);
-        top.addColorStop(0, BG_HEX);
-        top.addColorStop(1, `${BG_HEX}00`);
-        ctx.fillStyle = top;
-        ctx.fillRect(0, dy - 1, cw, fade + 1);
-        const bottom = ctx.createLinearGradient(0, dy + dh - fade, 0, dy + dh);
-        bottom.addColorStop(0, `${BG_HEX}00`);
-        bottom.addColorStop(1, BG_HEX);
-        ctx.fillStyle = bottom;
-        ctx.fillRect(0, dy + dh - fade, cw, fade + 1);
+        featherVertical(dy, dh);
+      } else {
+        // Short landscape screens (phones turned sideways): no room beside or below the text,
+        // so show the animation as a faint backdrop the text can sit on.
+        const scale = Math.max(cw / sw, ch / sh);
+        const dw = sw * scale;
+        const dh = sh * scale;
+        ctx.drawImage(imageToDraw, 0, 0, sw, sh, (cw - dw) / 2, (ch - dh) / 2, dw, dh);
+        ctx.fillStyle = `${BG_HEX}D9`;
+        ctx.fillRect(0, 0, cw, ch);
       }
     },
     [lastIndex]
@@ -170,12 +191,18 @@ export function ScrollHero({ frames }: ScrollHeroProps) {
 
     updateMobile();
 
-    // offsetTop/offsetHeight ignore the scroll-driven y transforms, so the value stays stable.
-    copyBottomRef.current = Array.from(
-      container.querySelectorAll<HTMLElement>("[data-hero-copy]")
-    ).reduce((max, el) => Math.max(max, el.offsetTop + el.offsetHeight), 0);
-
     const rect = container.getBoundingClientRect();
+
+    const copyEl = container.querySelector<HTMLElement>("[data-hero-copy]");
+    if (copyEl) {
+      const c = copyEl.getBoundingClientRect();
+      copyRectRef.current = {
+        top: c.top - rect.top,
+        bottom: c.bottom - rect.top,
+        left: c.left - rect.left,
+        right: c.right - rect.left,
+      };
+    }
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
     const targetW = Math.max(1, Math.round(rect.width * dpr));
@@ -305,11 +332,7 @@ export function ScrollHero({ frames }: ScrollHeroProps) {
       return;
     }
 
-    // Initialize targetFrame to 0 if at top of page
-    const initialProgress =
-      typeof window !== "undefined" && !window.location.hash
-        ? 0
-        : (scrollYProgress.get() || 0);
+    const initialProgress = Math.max(0, Math.min(1, scrollYProgress.get() || 0));
     targetFrameRef.current = initialProgress * lastIndex;
     currentFrameRef.current = initialProgress * lastIndex;
 
@@ -320,13 +343,12 @@ export function ScrollHero({ frames }: ScrollHeroProps) {
       targetFrameRef.current = clamped * lastIndex;
     });
 
-    // Lerp loop with factor 0.12
     let isRunning = true;
     const animate = () => {
       if (!isRunning) return;
 
       const diff = targetFrameRef.current - currentFrameRef.current;
-      currentFrameRef.current += diff * 0.12;
+      currentFrameRef.current += diff * 0.2;
 
       const rounded = Math.round(currentFrameRef.current);
       const step = frameStep(isMobileRef.current);
@@ -356,7 +378,7 @@ export function ScrollHero({ frames }: ScrollHeroProps) {
     <section
       ref={wrapperRef}
       id="hero-scroll"
-      className="relative w-full h-[350vh] md:h-[500vh] bg-[#EAE1D2]"
+      className="relative w-full h-[200vh] md:h-[250vh] bg-[#EAE1D2]"
     >
       {/* 2px Terracotta Loading Progress Bar */}
       {loadingProgress < 100 && (

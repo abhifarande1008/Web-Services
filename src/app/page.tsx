@@ -24,7 +24,7 @@ export default function Home() {
       {/* 1. Navbar (stays above hero with z-50, transparent at top, solid on scroll) */}
       <Navbar />
 
-      <main className="flex-1 w-full overflow-x-clip">
+      <main id="main" className="flex-1 w-full overflow-x-clip">
         {/* 2. Hero: Scroll-scrubbed frame sequence if frames available, else static hero */}
         {frames.length > 0 ? (
           <ScrollHero frames={frames} />
@@ -33,57 +33,57 @@ export default function Home() {
         )}
 
         {/* 3. What we build (Websites & Business software columns) */}
-        <div className="bg-[var(--bg)] section-deferred">
+        <div className="bg-[var(--bg)]">
           <WhatIBuild />
         </div>
 
         {/* 4. Interactive "What do you need?" */}
-        <div className="bg-[var(--bg)] section-deferred">
+        <div className="bg-[var(--bg)]">
           <InteractiveNeeds />
         </div>
 
         {/* 5. Industries (Hover reveal modules) */}
-        <div className="bg-[var(--bg)] section-deferred">
+        <div className="bg-[var(--bg)]">
           <Industries />
         </div>
 
         {/* 6. Process (Discover, Design, Build, Launch, Support) */}
-        <div className="bg-[var(--bg)] section-deferred">
+        <div className="bg-[var(--bg)]">
           <Process />
         </div>
 
         {/* 7. Example projects (4 illustrative projects, no client metrics) */}
-        <div className="bg-[var(--bg)] section-deferred">
+        <div className="bg-[var(--bg)]">
           <SelectedWork />
         </div>
 
         {/* 8. Packages & Pricing */}
-        <div className="bg-[var(--bg)] section-deferred">
+        <div className="bg-[var(--bg)]">
           <Packages />
         </div>
 
         {/* 9. Why work with us (5 proof points) */}
-        <div className="bg-[var(--bg)] section-deferred">
+        <div className="bg-[var(--bg)]">
           <WhyUs />
         </div>
 
         {/* 10. Tech stack row */}
-        <div className="bg-[var(--bg)] section-deferred">
+        <div className="bg-[var(--bg)]">
           <TechStack />
         </div>
 
         {/* 11. About (company + founder card) */}
-        <div className="bg-[var(--bg)] section-deferred">
+        <div className="bg-[var(--bg)]">
           <About />
         </div>
 
         {/* 12. FAQ accordion (6 questions) */}
-        <div className="bg-[var(--bg)] section-deferred">
+        <div className="bg-[var(--bg)]">
           <FAQ />
         </div>
 
         {/* 13. Contact (form, email, WhatsApp, call request) */}
-        <div className="bg-[var(--bg)] section-deferred">
+        <div className="bg-[var(--bg)]">
           <Contact />
         </div>
       </main>

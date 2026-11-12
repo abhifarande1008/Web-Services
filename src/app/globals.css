@@ -28,6 +28,8 @@
 /* Base styles */
 html {
   scroll-behavior: smooth;
+  /* Keeps anchor targets clear of the fixed 80px navbar. */
+  scroll-padding-top: 88px;
   background-color: #EAE1D2;
   color: #1F1F1C;
 }
@@ -127,12 +129,6 @@ h1, h2, h3, h4, h5, h6 {
 .btn-secondary:active {
   transform: translateY(1px);
 }
-}
-
-/* Defer offscreen rendering for mobile performance */
-.section-deferred {
-  content-visibility: auto;
-  contain-intrinsic-size: 1px 700px;
 }
 
 /* Reduced motion preference */
