@@ -36,6 +36,7 @@ export function ScrollHero({ frames }: ScrollHeroProps) {
   const rafIdRef = useRef<number | null>(null);
   // Box around the hero text, in CSS px relative to the sticky viewport.
   const copyRectRef = useRef({ top: 0, bottom: 0, left: 0, right: 0 });
+  const featherCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
   // Initialize storage for images
   useEffect(() => {
@@ -116,6 +117,55 @@ export function ScrollHero({ frames }: ScrollHeroProps) {
       const dw = sw * scale;
       const dh = sh * scale;
       ctx.drawImage(imageToDraw, 0, 0, sw, sh, (cw - dw) / 2, (ch - dh) / 2, dw, dh);
+
+      // Portrait screens: covering a 16:9 frame keeps only a narrow centre slice, so the
+      // cover version becomes a washed-out backdrop and a wider, sharp view sits below the text.
+      if (cw < ch) {
+        ctx.fillStyle = `${BG_HEX}B3`;
+        ctx.fillRect(0, 0, cw, ch);
+
+        const areaTop = (copy.bottom + 8) * dpr;
+        const areaH = Math.max(ch * 0.35, ch - 24 * dpr - areaTop);
+        const s = Math.min((cw * 1.45) / sw, areaH / sh);
+        const fw = Math.round(sw * s);
+        const fh = Math.round(sh * s);
+        const fx = Math.round((cw - fw) / 2);
+        const fy = Math.round(Math.min(areaTop + (areaH - fh) / 2, ch - fh));
+
+        let off = featherCanvasRef.current;
+        if (!off) {
+          off = document.createElement("canvas");
+          featherCanvasRef.current = off;
+        }
+        if (off.width !== fw || off.height !== fh) {
+          off.width = fw;
+          off.height = fh;
+        }
+        const octx = off.getContext("2d");
+        if (octx) {
+          octx.globalCompositeOperation = "source-over";
+          octx.clearRect(0, 0, fw, fh);
+          octx.drawImage(imageToDraw, 0, 0, sw, sh, 0, 0, fw, fh);
+          // Fade all four edges so the sharp view melts into the backdrop.
+          octx.globalCompositeOperation = "destination-in";
+          const h = octx.createLinearGradient(0, 0, fw, 0);
+          h.addColorStop(0, "rgba(0,0,0,0)");
+          h.addColorStop(0.12, "rgba(0,0,0,1)");
+          h.addColorStop(0.88, "rgba(0,0,0,1)");
+          h.addColorStop(1, "rgba(0,0,0,0)");
+          octx.fillStyle = h;
+          octx.fillRect(0, 0, fw, fh);
+          const v = octx.createLinearGradient(0, 0, 0, fh);
+          v.addColorStop(0, "rgba(0,0,0,0)");
+          v.addColorStop(0.18, "rgba(0,0,0,1)");
+          v.addColorStop(0.85, "rgba(0,0,0,1)");
+          v.addColorStop(1, "rgba(0,0,0,0)");
+          octx.fillStyle = v;
+          octx.fillRect(0, 0, fw, fh);
+          octx.globalCompositeOperation = "source-over";
+          ctx.drawImage(off, fx, fy);
+        }
+      }
 
       // Soft glow behind the text block only, so the copy stays readable over busy frames
       // while the rest of the animation is untouched.
