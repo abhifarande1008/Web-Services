@@ -3,8 +3,8 @@
 import React from "react";
 import { siteConfig } from "@/content/site";
 import { ClayCard } from "./ClayCard";
-import { MotifDots } from "./MockUI";
-import { Check, ArrowRight } from "lucide-react";
+import { SectionHeading } from "./SectionHeading";
+import { Check } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 
 export function Process() {
@@ -13,20 +13,13 @@ export function Process() {
   return (
     <section id="process" className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="text-center max-w-2xl mx-auto mb-16">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--surface)] border border-[var(--line)] text-xs font-mono uppercase tracking-wider text-[var(--terracotta)] mb-4">
-          Structured Milestones
-        </div>
-        <h2 className="font-serif text-3xl sm:text-5xl font-normal text-[var(--ink)] tracking-tight">
-          How we build together
-        </h2>
-        <p className="mt-4 text-base sm:text-lg text-[var(--muted)]">
-          Predictable execution from day one. You always know what is being built, when it will be ready, and what you receive at every step.
-        </p>
-      </div>
+      <SectionHeading
+        eyebrow="How we work"
+        title="Five steps, no surprises"
+        intro="You know what's being built, when it will be ready and what you get at each step."
+      />
 
-      {/* Process Timeline Grid (Horizontal on lg, Vertical on sm/md) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 relative">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-5 relative">
         {siteConfig.process.map((item, idx) => (
           <motion.div
             key={item.step}
@@ -36,22 +29,18 @@ export function Process() {
             transition={{ duration: 0.5, delay: idx * 0.1, ease: "easeOut" }}
             className="flex flex-col"
           >
-            <ClayCard className="p-6 h-full flex flex-col justify-between" enableTilt={true}>
+            <ClayCard className="p-6 h-full flex flex-col justify-between">
               <div>
-                {/* Step Header */}
-                <div className="flex items-center justify-between mb-4">
-                  <span className="font-serif font-bold text-2xl text-[var(--terracotta)]">
-                    {item.step}
-                  </span>
-                  <MotifDots />
-                </div>
+                <span className="block font-serif font-bold text-2xl text-[var(--terracotta)] mb-4">
+                  {item.step}
+                </span>
 
                 <div className="flex items-baseline justify-between gap-2 mb-2">
                   <h3 className="font-serif text-xl font-semibold text-[var(--ink)]">
                     {item.title}
                   </h3>
                 </div>
-                <div className="inline-block px-2.5 py-1 rounded-md bg-[var(--bg)] border border-[var(--line)] text-[11px] font-mono text-[var(--muted)] mb-3">
+                <div className="inline-block px-2.5 py-1 rounded-md bg-[var(--bg)] border border-[var(--line)] text-xs text-[var(--muted)] mb-3">
                   {item.duration}
                 </div>
 
@@ -62,8 +51,8 @@ export function Process() {
 
               {/* Deliverables */}
               <div className="pt-4 border-t border-[var(--line)]">
-                <span className="text-[11px] font-mono uppercase tracking-wider text-[var(--ink)] font-semibold block mb-2.5">
-                  What you get:
+                <span className="text-xs font-semibold text-[var(--ink)] block mb-2.5">
+                  What you get
                 </span>
                 <ul className="flex flex-col gap-2">
                   {item.deliverables.map((del, dIdx) => (

@@ -25,32 +25,34 @@ export function Navbar() {
           : "bg-transparent border-b border-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-6">
         {/* Brand Name */}
         <a
           href="#"
-          className="group flex items-center gap-3 font-semibold text-lg tracking-tight text-[var(--ink)] focus:outline-none focus:ring-2 focus:ring-[var(--terracotta)] rounded-lg p-1"
+          className="group flex items-center gap-3 min-w-0 font-semibold text-lg tracking-tight text-[var(--ink)] focus:outline-none focus:ring-2 focus:ring-[var(--terracotta)] rounded-lg p-1"
         >
-          <div className="w-8 h-8 rounded-lg bg-[var(--surface)] border border-[var(--line)] flex items-center justify-center shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_2px_4px_rgba(31,31,28,0.06)] group-hover:scale-105 transition-transform">
-            <span className="font-serif font-bold text-sm text-[var(--terracotta)]">F</span>
+          <div className="w-9 h-9 shrink-0 rounded-lg bg-[var(--ink)] flex items-center justify-center">
+            <span className="font-serif font-semibold text-base text-[var(--surface)]">
+              {siteConfig.brand.monogram}
+            </span>
           </div>
-          <div className="flex flex-col">
-            <span className="font-serif text-base leading-tight font-semibold tracking-normal text-[var(--ink)]">
+          <div className="flex flex-col min-w-0">
+            <span className="font-serif text-[15px] sm:text-base leading-tight font-semibold tracking-normal text-[var(--ink)] truncate">
               {siteConfig.brand.name}
             </span>
-            <span className="text-[11px] font-mono tracking-wider uppercase text-[var(--muted)]">
-              Web & App Studio
+            <span className="text-xs text-[var(--muted)] truncate">
+              {siteConfig.brand.descriptor}
             </span>
           </div>
         </a>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-1 lg:gap-2">
+        <nav className="hidden lg:flex items-center gap-1">
           {siteConfig.navigation.map((item) => (
             <a
               key={item.href}
               href={item.href}
-              className="px-3.5 py-2 text-sm font-medium text-[var(--ink)] hover:text-[var(--terracotta)] rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--terracotta)]"
+              className="px-2.5 xl:px-3.5 py-2 text-sm font-medium text-[var(--ink)] hover:text-[var(--terracotta)] rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--terracotta)]"
             >
               {item.label}
             </a>
@@ -58,10 +60,10 @@ export function Navbar() {
         </nav>
 
         {/* Right CTA */}
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden lg:flex items-center gap-4">
           <a
             href="#contact"
-            className="btn-primary text-sm py-2.5 px-5 font-medium"
+            className="btn-primary text-sm py-2.5 px-4 xl:px-5 font-medium whitespace-nowrap"
           >
             <span>Book a free call</span>
             <ArrowUpRight className="w-4 h-4" strokeWidth={1.5} />
@@ -69,7 +71,7 @@ export function Navbar() {
         </div>
 
         {/* Mobile menu button */}
-        <div className="flex md:hidden items-center">
+        <div className="flex lg:hidden items-center">
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -88,7 +90,7 @@ export function Navbar() {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-[var(--surface)] border-b border-[var(--line)] px-4 pt-2 pb-6 shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="lg:hidden bg-[var(--surface)] border-b border-[var(--line)] px-4 pt-2 pb-6 shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
           <nav className="flex flex-col gap-1.5 pt-2">
             {siteConfig.navigation.map((item) => (
               <a

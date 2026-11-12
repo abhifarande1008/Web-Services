@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { siteConfig } from "@/content/site";
 import { ClayCard } from "./ClayCard";
+import { SectionHeading } from "./SectionHeading";
 import { ChevronDown } from "lucide-react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
@@ -16,17 +17,12 @@ export function FAQ() {
 
   return (
     <section id="faq" className="py-24 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
-      <div className="text-center max-w-2xl mx-auto mb-16">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--surface)] border border-[var(--line)] text-xs font-mono uppercase tracking-wider text-[var(--terracotta)] mb-4">
-          Answers & Clarity
-        </div>
-        <h2 className="font-serif text-3xl sm:text-5xl font-normal text-[var(--ink)] tracking-tight">
-          Frequently asked questions
-        </h2>
-        <p className="mt-4 text-base sm:text-lg text-[var(--muted)]">
-          Everything you need to know about working together, intellectual property, timelines, and deliverables.
-        </p>
-      </div>
+      <SectionHeading
+        align="center"
+        eyebrow="FAQ"
+        title="Questions people usually ask"
+        intro={`Something not covered here? Email us at ${siteConfig.brand.email}.`}
+      />
 
       <div className="flex flex-col gap-4">
         {siteConfig.faq.map((item, idx) => {
@@ -40,13 +36,13 @@ export function FAQ() {
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: idx * 0.05 }}
             >
-              <ClayCard className="overflow-hidden" enableTilt={false}>
+              <ClayCard className="overflow-hidden">
                 <button
                   type="button"
                   onClick={() => toggle(item.id)}
                   aria-expanded={isOpen}
                   aria-controls={`faq-answer-${item.id}`}
-                  className="w-full p-6 text-left flex items-center justify-between gap-4 focus:outline-none focus:ring-2 focus:ring-[var(--terracotta)] rounded-2xl cursor-pointer"
+                  className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--terracotta)] rounded-2xl cursor-pointer"
                 >
                   <span className="font-serif text-lg sm:text-xl font-semibold text-[var(--ink)]">
                     {item.question}
@@ -69,7 +65,7 @@ export function FAQ() {
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.3, ease: "easeOut" }}
                     >
-                      <div className="px-6 pb-6 pt-1 text-sm sm:text-base text-[var(--muted)] leading-relaxed border-t border-[var(--line)]/50">
+                      <div className="px-5 sm:px-6 pb-6 pt-4 text-sm sm:text-base text-[var(--muted)] leading-relaxed border-t border-[var(--line)]/50">
                         {item.answer}
                       </div>
                     </motion.div>

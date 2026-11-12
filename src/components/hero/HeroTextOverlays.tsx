@@ -58,7 +58,7 @@ export function HeroTextOverlays({ progress }: HeroTextOverlaysProps) {
       >
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--surface)]/90 border border-[var(--line)] shadow-xs mb-4">
           <span className="w-2 h-2 rounded-full bg-[var(--sage)]" />
-          <span className="text-[11px] font-mono uppercase tracking-wider text-[var(--muted)]">
+          <span className="text-xs text-[var(--muted)] font-medium">
             {siteConfig.brand.availability}
           </span>
         </div>
@@ -77,8 +77,8 @@ export function HeroTextOverlays({ progress }: HeroTextOverlaysProps) {
       >
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--surface)]/90 border border-[var(--line)] shadow-xs mb-4">
           <span className="w-2 h-2 rounded-full bg-[var(--terracotta)]" />
-          <span className="text-[11px] font-mono uppercase tracking-wider text-[var(--terracotta)] font-medium">
-            Step 1: End-to-End Build
+          <span className="text-xs text-[var(--terracotta)] font-medium">
+            How it starts
           </span>
         </div>
         <h2 className="font-serif text-3xl sm:text-5xl md:text-6xl font-normal text-[var(--ink)] tracking-tight leading-[1.08] mb-3">
@@ -96,8 +96,8 @@ export function HeroTextOverlays({ progress }: HeroTextOverlaysProps) {
       >
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--surface)]/90 border border-[var(--line)] shadow-xs mb-4">
           <span className="w-2 h-2 rounded-full bg-[var(--sage)]" />
-          <span className="text-[11px] font-mono uppercase tracking-wider text-[var(--sage)] font-semibold">
-            Step 2: Commercial Velocity
+          <span className="text-xs text-[var(--ink)] font-medium">
+            Where it ends up
           </span>
         </div>
         <h2 className="font-serif text-3xl sm:text-5xl md:text-6xl font-normal text-[var(--ink)] tracking-tight leading-[1.08] mb-3">

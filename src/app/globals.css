@@ -46,7 +46,8 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-fraunces), Georgia, serif;
 }
 
-/* ClayCard signature physics */
+/* Kept in the components layer so Tailwind utilities (padding, borders) can override them. */
+@layer components {
 .clay-card {
   background-color: var(--surface);
   border-radius: 16px;
@@ -125,6 +126,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn-secondary:active {
   transform: translateY(1px);
+}
 }
 
 /* Defer offscreen rendering for mobile performance */

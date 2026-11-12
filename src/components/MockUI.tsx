@@ -1,15 +1,5 @@
 import React from "react";
 
-export function MotifDots() {
-  return (
-    <div className="flex items-center gap-1.5" aria-hidden="true">
-      <span className="w-2 h-2 rounded-full bg-[var(--terracotta)]" />
-      <span className="w-2 h-2 rounded-full bg-[var(--sage)]" />
-      <span className="w-2 h-2 rounded-full bg-[var(--muted)]/40" />
-    </div>
-  );
-}
-
 interface MockUIProps {
   type: "bars" | "toggle" | "chart" | "kanban" | "table" | "metric" | "pwa" | "api";
   className?: string;

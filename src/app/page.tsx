@@ -9,7 +9,7 @@ import { Industries } from "@/components/Industries";
 import { Process } from "@/components/Process";
 import { SelectedWork } from "@/components/SelectedWork";
 import { Packages } from "@/components/Packages";
-import { WhyMe } from "@/components/WhyMe";
+import { WhyUs } from "@/components/WhyUs";
 import { TechStack } from "@/components/TechStack";
 import { About } from "@/components/About";
 import { FAQ } from "@/components/FAQ";
@@ -32,7 +32,7 @@ export default function Home() {
           <StaticHero />
         )}
 
-        {/* 3. What I build (Web Services & App Services columns) */}
+        {/* 3. What we build (Websites & Business software columns) */}
         <div className="bg-[var(--bg)] section-deferred">
           <WhatIBuild />
         </div>
@@ -52,7 +52,7 @@ export default function Home() {
           <Process />
         </div>
 
-        {/* 7. Selected work (4 case studies with screenshot frames & metrics) */}
+        {/* 7. Example projects (4 illustrative projects, no client metrics) */}
         <div className="bg-[var(--bg)] section-deferred">
           <SelectedWork />
         </div>
@@ -62,9 +62,9 @@ export default function Home() {
           <Packages />
         </div>
 
-        {/* 9. Why work with me (5 proof points) */}
+        {/* 9. Why work with us (5 proof points) */}
         <div className="bg-[var(--bg)] section-deferred">
-          <WhyMe />
+          <WhyUs />
         </div>
 
         {/* 10. Tech stack row */}
@@ -72,7 +72,7 @@ export default function Home() {
           <TechStack />
         </div>
 
-        {/* 11. About (bio with image placeholder slot) */}
+        {/* 11. About (company + founder card) */}
         <div className="bg-[var(--bg)] section-deferred">
           <About />
         </div>
@@ -82,7 +82,7 @@ export default function Home() {
           <FAQ />
         </div>
 
-        {/* 13. Contact (form, WhatsApp, email, Calendly) */}
+        {/* 13. Contact (form, email, WhatsApp, call request) */}
         <div className="bg-[var(--bg)] section-deferred">
           <Contact />
         </div>

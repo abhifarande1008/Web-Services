@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import { siteConfig } from "@/content/site";
 import { ClayCard } from "./ClayCard";
-import { MotifDots } from "./MockUI";
-import { CheckCircle2, Clock, ArrowRight, Sparkles } from "lucide-react";
+import { SectionHeading } from "./SectionHeading";
+import { CheckCircle2, Clock, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
 export function InteractiveNeeds() {
@@ -31,17 +31,12 @@ export function InteractiveNeeds() {
   return (
     <section id="solutions" className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="text-center max-w-2xl mx-auto mb-12">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--surface)] border border-[var(--line)] text-xs font-mono uppercase tracking-wider text-[var(--terracotta)] mb-4">
-          Tailored Blueprint
-        </div>
-        <h2 className="font-serif text-3xl sm:text-5xl font-normal text-[var(--ink)] tracking-tight">
-          What do you need?
-        </h2>
-        <p className="mt-4 text-base sm:text-lg text-[var(--muted)]">
-          Select your primary business objective below to see the recommended architecture and delivery timeline.
-        </p>
-      </div>
+      <SectionHeading
+        align="center"
+        eyebrow="Solutions"
+        title="What do you need help with?"
+        intro="Pick the one closest to your situation to see what we'd typically build and how long it takes."
+      />
 
       {/* Interactive Chips Bar */}
       <div className="flex flex-wrap items-center justify-center gap-2.5 max-w-4xl mx-auto mb-12">
@@ -52,7 +47,8 @@ export function InteractiveNeeds() {
               key={item.id}
               type="button"
               onClick={() => setActiveId(item.id)}
-              className={`px-5 py-3 rounded-xl text-sm font-medium transition-all duration-200 border cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--terracotta)] ${
+              aria-pressed={isActive}
+              className={`px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl text-sm font-medium transition-all duration-200 border cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--terracotta)] ${
                 isActive
                   ? "bg-[var(--surface)] text-[var(--ink)] border-[var(--terracotta)] shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_4px_12px_rgba(200,100,60,0.12)] -translate-y-0.5"
                   : "bg-[var(--surface)]/70 text-[var(--muted)] border-[var(--line)] hover:bg-[var(--surface)] hover:text-[var(--ink)]"
@@ -81,22 +77,19 @@ export function InteractiveNeeds() {
             exit={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -12 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
           >
-            <ClayCard className="p-8 sm:p-10" enableTilt={false}>
+            <ClayCard className="p-6 sm:p-10">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[var(--line)]">
                 <div>
-                  <span className="text-xs font-mono uppercase tracking-wider text-[var(--terracotta)] font-semibold">
-                    Recommended Solution
+                  <span className="text-sm font-medium text-[var(--terracotta)]">
+                    What we&apos;d build
                   </span>
                   <h3 className="font-serif text-2xl sm:text-3xl font-semibold text-[var(--ink)] mt-1">
                     {activeSolution.title}
                   </h3>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[var(--bg)] border border-[var(--line)] text-xs font-medium text-[var(--ink)]">
-                    <Clock className="w-3.5 h-3.5 text-[var(--muted)]" strokeWidth={1.5} />
-                    <span>{activeSolution.timeline}</span>
-                  </div>
-                  <MotifDots />
+                <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[var(--bg)] border border-[var(--line)] text-xs font-medium text-[var(--ink)] w-fit shrink-0">
+                  <Clock className="w-3.5 h-3.5 text-[var(--muted)]" strokeWidth={1.5} />
+                  <span>{activeSolution.timeline}</span>
                 </div>
               </div>
 
@@ -106,8 +99,8 @@ export function InteractiveNeeds() {
 
               {/* What's Included */}
               <div className="mt-8">
-                <h4 className="text-xs font-mono uppercase tracking-wider text-[var(--ink)] font-semibold mb-4">
-                  What is included in this build:
+                <h4 className="text-sm font-semibold text-[var(--ink)] mb-4">
+                  Usually included
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                   {activeSolution.included.map((bullet, idx) => (
@@ -129,18 +122,15 @@ export function InteractiveNeeds() {
 
               {/* Action Bottom */}
               <div className="mt-8 pt-6 border-t border-[var(--line)] flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="text-xs text-[var(--muted)]">
-                  <span>Pre-fills inquiry for: </span>
-                  <strong className="text-[var(--ink)] font-medium">
-                    {activeSolution.servicePrefill}
-                  </strong>
-                </div>
+                <p className="text-xs text-[var(--muted)] text-center sm:text-left">
+                  Every project is scoped to your needs. This is a starting point, not a fixed package.
+                </p>
                 <button
                   type="button"
                   onClick={() => handleDiscussClick(activeSolution.servicePrefill)}
-                  className="btn-primary w-full sm:w-auto text-sm py-2.5 px-6 font-medium cursor-pointer"
+                  className="btn-primary w-full sm:w-auto shrink-0 text-sm py-2.5 px-6 font-medium cursor-pointer"
                 >
-                  <span>Discuss this solution</span>
+                  <span>Talk to us about this</span>
                   <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
                 </button>
               </div>

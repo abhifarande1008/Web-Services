@@ -3,8 +3,7 @@
 import React from "react";
 import { siteConfig, CaseStudy } from "@/content/site";
 import { ClayCard } from "./ClayCard";
-import { MotifDots } from "./MockUI";
-import { TrendingUp, Layers, CheckCircle2 } from "lucide-react";
+import { SectionHeading } from "./SectionHeading";
 import { motion, useReducedMotion } from "framer-motion";
 
 function ScreenshotFrame({ type }: { type: CaseStudy["previewType"] }) {
@@ -99,10 +98,8 @@ function ScreenshotFrame({ type }: { type: CaseStudy["previewType"] }) {
         </div>
       )}
 
-      {/* Frame Bottom status */}
-      <div className="flex items-center justify-between pt-1 border-t border-[var(--line)] text-[10px] text-[var(--muted)] font-mono">
-        <span>[FRAME PREVIEW]</span>
-        <span className="text-[var(--terracotta)]">Active Production</span>
+      <div className="pt-1 border-t border-[var(--line)] text-[10px] text-[var(--muted)]">
+        Illustration
       </div>
     </div>
   );
@@ -113,19 +110,13 @@ export function SelectedWork() {
 
   return (
     <section id="work" className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <div className="text-center max-w-2xl mx-auto mb-16">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--surface)] border border-[var(--line)] text-xs font-mono uppercase tracking-wider text-[var(--terracotta)] mb-4">
-          Case Studies & Proof
-        </div>
-        <h2 className="font-serif text-3xl sm:text-5xl font-normal text-[var(--ink)] tracking-tight">
-          Selected work
-        </h2>
-        <p className="mt-4 text-base sm:text-lg text-[var(--muted)]">
-          Real business problems solved with bespoke software architecture. Here is how tangible outcomes were delivered.
-        </p>
-      </div>
+      <SectionHeading
+        eyebrow="Example projects"
+        title="The kind of work we do"
+        intro="These are sample projects based on common business problems. They show how we approach the work. They are not client case studies."
+      />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
         {siteConfig.work.map((item, idx) => (
           <motion.div
             key={item.id}
@@ -134,14 +125,15 @@ export function SelectedWork() {
             viewport={{ once: true, margin: "-40px" }}
             transition={{ duration: 0.5, delay: idx * 0.1, ease: "easeOut" }}
           >
-            <ClayCard className="p-6 sm:p-8 flex flex-col justify-between h-full" enableTilt={true}>
+            <ClayCard className="p-6 sm:p-8 flex flex-col justify-between h-full">
               <div>
-                {/* Header */}
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-xs font-mono uppercase tracking-wider text-[var(--terracotta)] font-semibold">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+                  <span className="text-sm font-medium text-[var(--terracotta)]">
                     {item.industry}
                   </span>
-                  <MotifDots />
+                  <span className="text-[11px] px-2 py-0.5 rounded-md bg-[var(--bg)] border border-[var(--line)] text-[var(--muted)]">
+                    Example project
+                  </span>
                 </div>
 
                 <h3 className="font-serif text-2xl font-semibold text-[var(--ink)] mb-4">
@@ -153,41 +145,38 @@ export function SelectedWork() {
                   <ScreenshotFrame type={item.previewType} />
                 </div>
 
-                {/* Problem, Solution, Result breakdown */}
                 <div className="space-y-4 text-sm leading-relaxed mb-6">
                   <div>
                     <span className="font-semibold text-[var(--ink)] block mb-1">
-                      Problem:
+                      The problem
                     </span>
                     <p className="text-[var(--muted)]">{item.problem}</p>
                   </div>
                   <div>
                     <span className="font-semibold text-[var(--ink)] block mb-1">
-                      Solution:
+                      What we build
                     </span>
                     <p className="text-[var(--muted)]">{item.solution}</p>
                   </div>
                   <div>
                     <span className="font-semibold text-[var(--ink)] block mb-1">
-                      Result:
+                      What changes
                     </span>
-                    <p className="text-[var(--ink)] font-medium">{item.result}</p>
+                    <p className="text-[var(--ink)]">{item.outcome}</p>
                   </div>
                 </div>
               </div>
 
-              {/* Metric Chips with [PLACEHOLDER] values */}
-              <div className="pt-4 border-t border-[var(--line)] flex flex-wrap items-center gap-3">
-                {item.metrics.map((metric, mIdx) => (
-                  <span
-                    key={mIdx}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--bg)] border border-[var(--line)] text-xs font-mono font-medium text-[var(--ink)]"
+              <ul className="pt-4 border-t border-[var(--line)] flex flex-wrap items-center gap-2">
+                {item.modules.map((module) => (
+                  <li
+                    key={module}
+                    className="px-2.5 py-1 rounded-lg bg-[var(--bg)] border border-[var(--line)] text-xs text-[var(--ink)]"
                   >
-                    <TrendingUp className="w-3.5 h-3.5 text-[var(--terracotta)]" strokeWidth={1.5} />
-                    {metric}
-                  </span>
+                    {module}
+                  </li>
                 ))}
-              </div>
+              </ul>
             </ClayCard>
           </motion.div>
         ))}

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { siteConfig } from "@/content/site";
 import { ClayCard } from "./ClayCard";
-import { MotifDots } from "./MockUI";
+import { SectionHeading } from "./SectionHeading";
 import {
   Mail,
   MessageCircle,
@@ -12,9 +12,7 @@ import {
   CheckCircle2,
   AlertCircle,
   ArrowUpRight,
-  Clock,
 } from "lucide-react";
-import { motion, useReducedMotion } from "framer-motion";
 
 export function Contact() {
   const [formData, setFormData] = useState({
@@ -26,10 +24,8 @@ export function Contact() {
     message: "",
   });
 
-  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "emailed" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
-  const shouldReduceMotion = useReducedMotion();
-
   useEffect(() => {
     // Listen for prefill-service event from InteractiveNeeds and Packages sections
     const handlePrefill = (e: Event) => {
@@ -53,11 +49,35 @@ export function Contact() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const openEmailDraft = () => {
+    const subject = `Project enquiry: ${formData.service}`;
+    const body = [
+      `Name: ${formData.name}`,
+      `Email: ${formData.email}`,
+      `Phone / WhatsApp: ${formData.whatsapp || "-"}`,
+      `Service: ${formData.service}`,
+      `Budget: ${formData.budget}`,
+      "",
+      formData.message,
+    ].join("\n");
+    window.location.href = `mailto:${siteConfig.brand.email}?subject=${encodeURIComponent(
+      subject
+    )}&body=${encodeURIComponent(body)}`;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus("submitting");
     setErrorMessage("");
 
+    // Without a real Formspree form ID there is nowhere to POST, so hand the
+    // enquiry to the visitor's email app instead of pretending it was sent.
+    if (siteConfig.brand.formspreeEndpoint.includes("[FORMSPREE_ENDPOINT]")) {
+      openEmailDraft();
+      setStatus("emailed");
+      return;
+    }
+
+    setStatus("submitting");
     try {
       const response = await fetch(siteConfig.brand.formspreeEndpoint, {
         method: "POST",
@@ -71,69 +91,64 @@ export function Contact() {
       if (response.ok) {
         setStatus("success");
       } else {
-        // Fallback for placeholder endpoint:
-        // Even if the endpoint is a placeholder like [FORMSPREE_ENDPOINT], provide clear UX
         const data = await response.json().catch(() => null);
-        if (siteConfig.brand.formspreeEndpoint.includes("[FORMSPREE_ENDPOINT]")) {
-          // In development or demo mode with placeholder endpoint, simulate graceful submission
-          setStatus("success");
-        } else {
-          setErrorMessage(data?.error || "Submission failed. Please email or WhatsApp directly.");
-          setStatus("error");
-        }
-      }
-    } catch (err) {
-      if (siteConfig.brand.formspreeEndpoint.includes("[FORMSPREE_ENDPOINT]")) {
-        // Handle mock placeholder cleanly
-        setStatus("success");
-      } else {
+        setErrorMessage(
+          data?.error || `Your message couldn't be sent. Please email us at ${siteConfig.brand.email}.`
+        );
         setStatus("error");
-        setErrorMessage("Network error occurred. Please reach out via email or WhatsApp.");
       }
+    } catch {
+      setErrorMessage(`Network error. Please email us at ${siteConfig.brand.email} or message us on WhatsApp.`);
+      setStatus("error");
     }
   };
 
   return (
     <section id="contact" className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* Large Closing Headline */}
-      <div className="text-center max-w-3xl mx-auto mb-16">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--surface)] border border-[var(--line)] text-xs font-mono uppercase tracking-wider text-[var(--terracotta)] mb-4">
-          Start a Conversation
-        </div>
-        <h2 className="font-serif text-3xl sm:text-5xl md:text-6xl font-normal text-[var(--ink)] tracking-tight leading-tight">
-          {siteConfig.contact.headline}
-        </h2>
-        <p className="mt-6 text-base sm:text-lg text-[var(--muted)] leading-relaxed max-w-2xl mx-auto">
-          {siteConfig.contact.subheading}
-        </p>
-      </div>
+      <SectionHeading
+        align="center"
+        eyebrow="Contact"
+        title={siteConfig.contact.headline}
+        intro={siteConfig.contact.subheading}
+      />
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Contact Form ClayCard */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
         <div className="lg:col-span-7">
-          <ClayCard className="p-8 sm:p-10" enableTilt={false}>
-            <div className="flex items-center justify-between pb-6 border-b border-[var(--line)] mb-6">
-              <div>
-                <h3 className="font-serif text-2xl font-semibold text-[var(--ink)]">
-                  Project Inquiry
-                </h3>
-                <p className="text-xs text-[var(--muted)] mt-1">
-                  Fill in your project brief or selected service below.
-                </p>
-              </div>
-              <MotifDots />
+          <ClayCard className="p-5 sm:p-10">
+            <div className="pb-6 border-b border-[var(--line)] mb-6">
+              <h3 className="font-serif text-2xl font-semibold text-[var(--ink)]">
+                Project enquiry
+              </h3>
+              <p className="text-sm text-[var(--muted)] mt-1">
+                A few lines is enough. We&apos;ll ask follow-up questions if we need to.
+              </p>
             </div>
 
-            {status === "success" ? (
+            {status === "success" || status === "emailed" ? (
               <div className="py-12 flex flex-col items-center text-center">
                 <div className="w-14 h-14 rounded-full bg-[var(--sage)]/20 border border-[var(--sage)] flex items-center justify-center text-[var(--sage)] mb-4">
                   <CheckCircle2 className="w-8 h-8" strokeWidth={1.5} />
                 </div>
                 <h4 className="font-serif text-2xl font-semibold text-[var(--ink)] mb-2">
-                  Inquiry Received!
+                  {status === "success" ? "Thanks, we've got your message" : "Almost done"}
                 </h4>
                 <p className="text-sm text-[var(--muted)] max-w-md leading-relaxed mb-6">
-                  Thank you for reaching out. I review all project inquiries personally and will respond with thoughts and availability within 24 hours.
+                  {status === "success" ? (
+                    <>We&apos;ll get back to you within one working day.</>
+                  ) : (
+                    <>
+                      Your email app should have opened with your message filled in. Press send and
+                      we&apos;ll reply within one working day. If nothing opened, write to us at{" "}
+                      <a
+                        href={`mailto:${siteConfig.brand.email}`}
+                        className="text-[var(--ink)] underline underline-offset-2 break-all"
+                      >
+                        {siteConfig.brand.email}
+                      </a>
+                      .
+                    </>
+                  )}
                 </p>
                 <button
                   type="button"
@@ -155,8 +170,8 @@ export function Contact() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Name */}
                   <div className="flex flex-col gap-1.5">
-                    <label htmlFor="name" className="text-xs font-mono uppercase tracking-wider text-[var(--ink)] font-medium">
-                      Your Name *
+                    <label htmlFor="name" className="text-sm text-[var(--ink)] font-medium">
+                      Your name *
                     </label>
                     <input
                       id="name"
@@ -165,15 +180,16 @@ export function Contact() {
                       required
                       value={formData.name}
                       onChange={handleChange}
-                      placeholder="e.g. Alex Henderson"
+                      autoComplete="name"
+                      placeholder="Full name"
                       className="w-full px-4 py-3 rounded-xl bg-[var(--bg)]/60 border border-[var(--line)] text-sm text-[var(--ink)] placeholder:text-[var(--muted)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--terracotta)]"
                     />
                   </div>
 
                   {/* Email */}
                   <div className="flex flex-col gap-1.5">
-                    <label htmlFor="email" className="text-xs font-mono uppercase tracking-wider text-[var(--ink)] font-medium">
-                      Email Address *
+                    <label htmlFor="email" className="text-sm text-[var(--ink)] font-medium">
+                      Email *
                     </label>
                     <input
                       id="email"
@@ -182,7 +198,8 @@ export function Contact() {
                       required
                       value={formData.email}
                       onChange={handleChange}
-                      placeholder="alex@company.com"
+                      autoComplete="email"
+                      placeholder="you@company.com"
                       className="w-full px-4 py-3 rounded-xl bg-[var(--bg)]/60 border border-[var(--line)] text-sm text-[var(--ink)] placeholder:text-[var(--muted)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--terracotta)]"
                     />
                   </div>
@@ -191,8 +208,8 @@ export function Contact() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* WhatsApp */}
                   <div className="flex flex-col gap-1.5">
-                    <label htmlFor="whatsapp" className="text-xs font-mono uppercase tracking-wider text-[var(--ink)] font-medium">
-                      WhatsApp / Phone
+                    <label htmlFor="whatsapp" className="text-sm text-[var(--ink)] font-medium">
+                      Phone or WhatsApp
                     </label>
                     <input
                       id="whatsapp"
@@ -200,15 +217,16 @@ export function Contact() {
                       type="tel"
                       value={formData.whatsapp}
                       onChange={handleChange}
-                      placeholder="+1 (555) 000-0000"
+                      autoComplete="tel"
+                      placeholder="+91"
                       className="w-full px-4 py-3 rounded-xl bg-[var(--bg)]/60 border border-[var(--line)] text-sm text-[var(--ink)] placeholder:text-[var(--muted)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--terracotta)]"
                     />
                   </div>
 
                   {/* Service Dropdown */}
                   <div className="flex flex-col gap-1.5">
-                    <label htmlFor="service" className="text-xs font-mono uppercase tracking-wider text-[var(--ink)] font-medium">
-                      Service Needed *
+                    <label htmlFor="service" className="text-sm text-[var(--ink)] font-medium">
+                      What do you need? *
                     </label>
                     <select
                       id="service"
@@ -228,8 +246,8 @@ export function Contact() {
 
                 {/* Budget Range Dropdown */}
                 <div className="flex flex-col gap-1.5">
-                  <label htmlFor="budget" className="text-xs font-mono uppercase tracking-wider text-[var(--ink)] font-medium">
-                    Target Budget Range *
+                  <label htmlFor="budget" className="text-sm text-[var(--ink)] font-medium">
+                    Rough budget *
                   </label>
                   <select
                     id="budget"
@@ -248,8 +266,8 @@ export function Contact() {
 
                 {/* Message */}
                 <div className="flex flex-col gap-1.5">
-                  <label htmlFor="message" className="text-xs font-mono uppercase tracking-wider text-[var(--ink)] font-medium">
-                    Project Details / Problem to Solve *
+                  <label htmlFor="message" className="text-sm text-[var(--ink)] font-medium">
+                    Tell us about the project *
                   </label>
                   <textarea
                     id="message"
@@ -258,7 +276,7 @@ export function Contact() {
                     required
                     value={formData.message}
                     onChange={handleChange}
-                    placeholder="Briefly describe what your business does and the workflow or website you would like to build..."
+                    placeholder="What does your business do, and what would you like to build or fix?"
                     className="w-full px-4 py-3 rounded-xl bg-[var(--bg)]/60 border border-[var(--line)] text-sm text-[var(--ink)] placeholder:text-[var(--muted)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--terracotta)] resize-y"
                   />
                 </div>
@@ -270,10 +288,10 @@ export function Contact() {
                   className="btn-primary w-full py-3.5 text-sm font-medium justify-center cursor-pointer disabled:opacity-50 mt-2"
                 >
                   {status === "submitting" ? (
-                    <span>Sending inquiry...</span>
+                    <span>Sending…</span>
                   ) : (
                     <>
-                      <span>Send Project Inquiry</span>
+                      <span>Send enquiry</span>
                       <Send className="w-4 h-4" strokeWidth={1.5} />
                     </>
                   )}
@@ -283,84 +301,67 @@ export function Contact() {
           </ClayCard>
         </div>
 
-        {/* Direct Channels / Calendly Placeholder */}
-        <div className="lg:col-span-5 flex flex-col gap-6">
-          {/* Calendly Placeholder Card */}
-          <ClayCard className="p-6 sm:p-7" enableTilt={true}>
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-10 h-10 rounded-xl bg-[var(--bg)] border border-[var(--line)] flex items-center justify-center text-[var(--terracotta)]">
-                <Calendar className="w-5 h-5" strokeWidth={1.5} />
-              </div>
-              <MotifDots />
+        <div className="lg:col-span-5 flex flex-col gap-5">
+          <ClayCard className="p-6">
+            <div className="w-10 h-10 mb-4 rounded-xl bg-[var(--bg)] border border-[var(--line)] flex items-center justify-center text-[var(--terracotta)]">
+              <Mail className="w-5 h-5" strokeWidth={1.5} />
             </div>
-
-            <h4 className="font-serif text-xl font-semibold text-[var(--ink)] mb-2">
-              Book a 20-min Discovery Call
-            </h4>
-            <p className="text-xs text-[var(--muted)] leading-relaxed mb-6">
-              Prefer a direct conversation? Schedule a quick video or audio discovery call to discuss your project requirements and technical feasibility.
+            <h4 className="font-serif text-lg font-semibold text-[var(--ink)] mb-1">Email us</h4>
+            <p className="text-sm text-[var(--muted)] mb-4">
+              Good for longer briefs, documents or screenshots of what you use today.
             </p>
-
             <a
-              href={siteConfig.brand.calendlyLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-secondary w-full text-xs py-3 justify-center font-medium"
+              href={`mailto:${siteConfig.brand.email}`}
+              className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--ink)] hover:text-[var(--terracotta)] transition-colors break-all"
             >
-              <span>Schedule on Calendly</span>
-              <ArrowUpRight className="w-3.5 h-3.5" strokeWidth={1.5} />
+              <span>{siteConfig.brand.email}</span>
+              <ArrowUpRight className="w-4 h-4 shrink-0" strokeWidth={1.5} />
             </a>
           </ClayCard>
 
-          {/* WhatsApp Direct */}
-          <ClayCard className="p-6" enableTilt={true}>
-            <div className="flex items-center justify-between mb-3">
-              <div className="w-10 h-10 rounded-xl bg-[var(--bg)] border border-[var(--line)] flex items-center justify-center text-[var(--sage)]">
-                <MessageCircle className="w-5 h-5" strokeWidth={1.5} />
-              </div>
-              <span className="text-[11px] font-mono text-[var(--sage)] font-medium">Quick Chat</span>
+          <ClayCard className="p-6">
+            <div className="w-10 h-10 mb-4 rounded-xl bg-[var(--bg)] border border-[var(--line)] flex items-center justify-center text-[var(--sage)]">
+              <MessageCircle className="w-5 h-5" strokeWidth={1.5} />
             </div>
-
-            <h4 className="font-serif text-lg font-semibold text-[var(--ink)] mb-1">
-              WhatsApp Direct
-            </h4>
-            <p className="text-xs text-[var(--muted)] mb-4">
-              Have a quick question or want to share a voice note?
+            <h4 className="font-serif text-lg font-semibold text-[var(--ink)] mb-1">WhatsApp</h4>
+            <p className="text-sm text-[var(--muted)] mb-4">
+              For a quick question, or if you&apos;d rather send a voice note.
             </p>
-
             <a
               href={siteConfig.brand.whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-xs font-semibold text-[var(--ink)] hover:text-[var(--terracotta)] transition-colors"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--ink)] hover:text-[var(--terracotta)] transition-colors"
             >
-              <span>Message on WhatsApp ({siteConfig.brand.whatsappNumber})</span>
-              <ArrowUpRight className="w-3.5 h-3.5" strokeWidth={1.5} />
+              <span>{siteConfig.brand.whatsappNumber}</span>
+              <ArrowUpRight className="w-4 h-4 shrink-0" strokeWidth={1.5} />
             </a>
           </ClayCard>
 
-          {/* Email Direct */}
-          <ClayCard className="p-6" enableTilt={true}>
-            <div className="flex items-center justify-between mb-3">
-              <div className="w-10 h-10 rounded-xl bg-[var(--bg)] border border-[var(--line)] flex items-center justify-center text-[var(--ink)]">
-                <Mail className="w-5 h-5" strokeWidth={1.5} />
-              </div>
-              <span className="text-[11px] font-mono text-[var(--muted)]">Direct Inbox</span>
+          <ClayCard className="p-6">
+            <div className="w-10 h-10 mb-4 rounded-xl bg-[var(--bg)] border border-[var(--line)] flex items-center justify-center text-[var(--ink)]">
+              <Calendar className="w-5 h-5" strokeWidth={1.5} />
             </div>
-
             <h4 className="font-serif text-lg font-semibold text-[var(--ink)] mb-1">
-              Direct Email
+              Book a free 20-minute call
             </h4>
-            <p className="text-xs text-[var(--muted)] mb-4">
-              Send documents, RFPs, or architectural briefs.
+            <p className="text-sm text-[var(--muted)] mb-4">
+              {siteConfig.brand.calendlyLink
+                ? "Pick a time that suits you and we'll talk through what you need."
+                : "Email us two or three times that suit you and we'll send a meeting invite."}
             </p>
-
             <a
-              href={`mailto:${siteConfig.brand.email}`}
-              className="inline-flex items-center gap-2 text-xs font-semibold text-[var(--ink)] hover:text-[var(--terracotta)] transition-colors"
+              href={
+                siteConfig.brand.calendlyLink ||
+                `mailto:${siteConfig.brand.email}?subject=${encodeURIComponent("Call request")}`
+              }
+              {...(siteConfig.brand.calendlyLink
+                ? { target: "_blank", rel: "noopener noreferrer" }
+                : {})}
+              className="btn-secondary w-full text-sm py-3 justify-center font-medium"
             >
-              <span>{siteConfig.brand.email}</span>
-              <ArrowUpRight className="w-3.5 h-3.5" strokeWidth={1.5} />
+              <span>{siteConfig.brand.calendlyLink ? "Choose a time" : "Request a call"}</span>
+              <ArrowUpRight className="w-4 h-4" strokeWidth={1.5} />
             </a>
           </ClayCard>
         </div>

@@ -19,35 +19,38 @@ export const viewport = {
   themeColor: "#EAE1D2",
 };
 
+const pageTitle = `${siteConfig.brand.name} | Websites & Business Software`;
+const pageDescription =
+  "Omtech Modern Solutions designs and builds websites, landing pages and business software such as CRMs, ERPs and booking systems for small and growing companies.";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://farandestudio.com"),
-  title: `${siteConfig.brand.name} | Web Services & App Services for Businesses`,
-  description: `${siteConfig.brand.tagline} Websites, landing pages and business software (CRM, ERP and custom tools), designed and built end to end by one developer.`,
+  metadataBase: new URL(siteConfig.brand.siteUrl),
+  title: pageTitle,
+  description: pageDescription,
   keywords: [
-    "Web Services",
-    "App Services",
-    "Custom CRM",
-    "Custom ERP",
-    "Next.js Developer",
-    "Full-Stack Freelance Engineer",
-    "Landing Page Sprint",
-    "Workflow Automation",
-    "Business Software",
+    "Omtech Modern Solutions",
+    "website development",
+    "landing page design",
+    "custom CRM",
+    "custom ERP",
+    "booking system",
+    "business software",
+    "workflow automation",
   ],
-  authors: [{ name: siteConfig.brand.founder }],
-  creator: siteConfig.brand.founder,
+  authors: [{ name: siteConfig.brand.name }],
+  creator: siteConfig.brand.name,
   openGraph: {
     type: "website",
-    locale: "en_US",
-    url: "https://farandestudio.com",
-    title: `${siteConfig.brand.name} — Web Services & App Services`,
-    description: siteConfig.brand.tagline,
+    locale: "en_IN",
+    url: siteConfig.brand.siteUrl,
+    title: pageTitle,
+    description: pageDescription,
     siteName: siteConfig.brand.name,
   },
   twitter: {
     card: "summary_large_image",
-    title: `${siteConfig.brand.name} — Web Services & App Services`,
-    description: siteConfig.brand.tagline,
+    title: pageTitle,
+    description: pageDescription,
   },
   robots: {
     index: true,

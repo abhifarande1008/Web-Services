@@ -3,8 +3,8 @@
 import React from "react";
 import { siteConfig } from "@/content/site";
 import { ClayCard } from "./ClayCard";
-import { MotifDots } from "./MockUI";
-import { Check, ArrowRight, Sparkles } from "lucide-react";
+import { SectionHeading } from "./SectionHeading";
+import { Check, ArrowRight } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 
 export function Packages() {
@@ -24,19 +24,13 @@ export function Packages() {
 
   return (
     <section id="pricing" className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <div className="text-center max-w-2xl mx-auto mb-16">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--surface)] border border-[var(--line)] text-xs font-mono uppercase tracking-wider text-[var(--terracotta)] mb-4">
-          Transparent Scope
-        </div>
-        <h2 className="font-serif text-3xl sm:text-5xl font-normal text-[var(--ink)] tracking-tight">
-          Packages & engagement
-        </h2>
-        <p className="mt-4 text-base sm:text-lg text-[var(--muted)]">
-          Predictable flat-fee packages. No unexpected hourly bills, no bloated retainers.
-        </p>
-      </div>
+      <SectionHeading
+        eyebrow="Pricing"
+        title="Ways to work with us"
+        intro="Every project gets a fixed quote after a short call, so you know the full cost before anything starts."
+      />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
         {siteConfig.packages.map((pkg, idx) => {
           const isHighlighted = pkg.isPopular;
 
@@ -52,50 +46,48 @@ export function Packages() {
                 className={`p-6 sm:p-7 flex flex-col justify-between h-full ${
                   isHighlighted ? "ring-1 ring-[var(--terracotta)]/40" : ""
                 }`}
-                enableTilt={true}
                 highlightTop={isHighlighted}
               >
                 <div>
-                  {/* Top Bar */}
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-mono uppercase tracking-wider text-[var(--muted)]">
-                      {pkg.timeline}
-                    </span>
-                    <MotifDots />
-                  </div>
-
-                  {isHighlighted && (
-                    <div className="mb-2">
-                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[var(--terracotta)]/10 text-[var(--terracotta)] text-[11px] font-mono font-medium">
-                        Flagship Architecture
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <span className="text-xs text-[var(--muted)]">{pkg.timeline}</span>
+                    {isHighlighted && (
+                      <span className="px-2.5 py-0.5 rounded-full bg-[var(--terracotta)]/10 text-[var(--terracotta)] text-[11px] font-medium">
+                        Most asked about
                       </span>
-                    </div>
-                  )}
+                    )}
+                  </div>
 
                   <h3 className="font-serif text-2xl font-semibold text-[var(--ink)] mb-2">
                     {pkg.name}
                   </h3>
 
-                  {/* Price */}
-                  <div className="flex items-baseline gap-1 my-4">
-                    <span className="font-serif text-3xl font-bold text-[var(--ink)]">
-                      {pkg.price}
-                    </span>
-                    <span className="text-xs text-[var(--muted)]">/ project</span>
+                  <div className="flex items-baseline gap-1 mt-1 mb-4">
+                    {pkg.price ? (
+                      <>
+                        <span className="font-serif text-3xl font-bold text-[var(--ink)]">
+                          {pkg.price}
+                        </span>
+                        <span className="text-xs text-[var(--muted)]">/ project</span>
+                      </>
+                    ) : (
+                      <span className="text-sm font-medium text-[var(--terracotta)]">
+                        Fixed price, quoted after a free call
+                      </span>
+                    )}
                   </div>
 
-                  <p className="text-xs text-[var(--muted)] leading-relaxed mb-6">
+                  <p className="text-sm text-[var(--muted)] leading-relaxed mb-6">
                     {pkg.description}
                   </p>
 
-                  {/* 5 Features */}
                   <div className="pt-4 border-t border-[var(--line)]">
-                    <span className="text-[11px] font-mono uppercase tracking-wider text-[var(--ink)] font-semibold block mb-3">
-                      Included in this package:
+                    <span className="text-xs font-semibold text-[var(--ink)] block mb-3">
+                      What&apos;s included
                     </span>
                     <ul className="flex flex-col gap-2.5">
                       {pkg.features.map((feat, fIdx) => (
-                        <li key={fIdx} className="flex items-start gap-2 text-xs text-[var(--ink)] leading-snug">
+                        <li key={fIdx} className="flex items-start gap-2 text-sm text-[var(--ink)] leading-snug">
                           <Check className="w-3.5 h-3.5 text-[var(--sage)] shrink-0 mt-0.5" strokeWidth={2} />
                           <span>{feat}</span>
                         </li>
@@ -109,7 +101,7 @@ export function Packages() {
                   <button
                     type="button"
                     onClick={() => handleSelectPackage(pkg.servicePrefill)}
-                    className={`w-full text-xs py-3 px-4 font-medium justify-center cursor-pointer ${
+                    className={`w-full text-sm py-3 px-4 font-medium justify-center cursor-pointer ${
                       isHighlighted ? "btn-primary" : "btn-secondary"
                     }`}
                   >

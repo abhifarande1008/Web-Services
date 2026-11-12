@@ -3,7 +3,7 @@
 import React from "react";
 import { siteConfig } from "@/content/site";
 import { ClayCard } from "../ClayCard";
-import { MotifDots, MockUI } from "../MockUI";
+import { MockUI } from "../MockUI";
 import { ArrowUpRight, ArrowDown, CheckCircle2 } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 
@@ -42,11 +42,9 @@ export function StaticHero() {
           className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--surface)] border border-[var(--line)] shadow-sm mb-8"
         >
           <span className="w-2 h-2 rounded-full bg-[var(--sage)] animate-pulse" />
-          <span className="text-xs font-medium tracking-wide uppercase text-[var(--muted)]">
+          <span className="text-xs font-medium text-[var(--muted)]">
             {siteConfig.brand.availability}
           </span>
-          <span className="text-xs font-mono text-[var(--line)]">|</span>
-          <span className="text-xs font-medium text-[var(--ink)]">Direct 1:1 Engagement</span>
         </motion.div>
 
         <motion.h1
@@ -95,41 +93,26 @@ export function StaticHero() {
           transition={{ duration: 0.8, delay: 0.4, ease: smoothEase }}
           className="mt-16 w-full max-w-4xl grid grid-cols-1 sm:grid-cols-3 gap-4 text-left"
         >
-          <ClayCard className="p-5" enableTilt={true}>
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-mono uppercase tracking-wider text-[var(--muted)] font-medium">
-                Web Systems
-              </span>
-              <MotifDots />
-            </div>
+          <ClayCard className="p-5">
+            <span className="text-xs font-medium text-[var(--muted)] block mb-2">Websites</span>
             <p className="text-sm font-serif font-medium text-[var(--ink)] mb-3">
-              High-Speed Landing & Portals
+              Landing pages and company sites
             </p>
             <MockUI type="chart" />
           </ClayCard>
 
-          <ClayCard className="p-5" enableTilt={true} highlightTop={true}>
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-mono uppercase tracking-wider text-[var(--terracotta)] font-medium">
-                Business ERP / CRM
-              </span>
-              <MotifDots />
-            </div>
+          <ClayCard className="p-5" highlightTop={true}>
+            <span className="text-xs font-medium text-[var(--terracotta)] block mb-2">Business software</span>
             <p className="text-sm font-serif font-medium text-[var(--ink)] mb-3">
-              Pipelines, Billing & Inventory
+              CRM, billing and inventory
             </p>
             <MockUI type="kanban" />
           </ClayCard>
 
-          <ClayCard className="p-5" enableTilt={true}>
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-mono uppercase tracking-wider text-[var(--sage)] font-semibold">
-                Integrations
-              </span>
-              <MotifDots />
-            </div>
+          <ClayCard className="p-5">
+            <span className="text-xs font-medium text-[var(--muted)] block mb-2">Integrations</span>
             <p className="text-sm font-serif font-medium text-[var(--ink)] mb-3">
-              WhatsApp, APIs & Workflows
+              WhatsApp, payments and APIs
             </p>
             <MockUI type="toggle" />
           </ClayCard>
@@ -145,7 +128,7 @@ export function StaticHero() {
             <div key={idx} className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-[var(--terracotta)]" strokeWidth={1.5} />
               <span>
-                <strong className="text-[var(--ink)] font-semibold">{m.label}:</strong> {m.value}
+                {m.label} <strong className="text-[var(--ink)] font-semibold">{m.value}</strong>
               </span>
             </div>
           ))}
