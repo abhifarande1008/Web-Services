@@ -35,6 +35,8 @@ export function ScrollHero({ frames }: ScrollHeroProps) {
   const drawnSourceRef = useRef<number>(-1);
   const isMobileRef = useRef(false);
   const rafIdRef = useRef<number | null>(null);
+  // Bottom edge of the tallest hero text block, in CSS px from the top of the sticky viewport.
+  const copyBottomRef = useRef(0);
 
   // 1. Reset scroll position on mount so load / refresh starts at the top
   useEffect(() => {
@@ -130,13 +132,31 @@ export function ScrollHero({ frames }: ScrollHeroProps) {
         const dy = (ch - dh) / 2;
         ctx.drawImage(imageToDraw, 0, 0, sw, sh, dx, dy, dw, dh);
       } else {
-        // Portrait screens: scale to fit width and centre vertically so panels are never cropped
-        const scale = cw / sw;
-        const dw = cw;
+        // Portrait screens: the text sits at the top, so fit the frame into the space below it.
+        // Zoom slightly past full width (trimming the side panels) so the centre dashboard stays readable.
+        const dpr = cw / Math.max(1, canvas.clientWidth);
+        const areaTop = (copyBottomRef.current + 16) * dpr;
+        const areaBottom = ch - 56 * dpr;
+        const areaH = Math.max(ch * 0.3, areaBottom - areaTop);
+        const scale = Math.min((cw * 1.5) / sw, areaH / sh);
+        const dw = sw * scale;
         const dh = sh * scale;
-        const dx = 0;
-        const dy = (ch - dh) / 2;
+        const dx = (cw - dw) / 2;
+        const dy = Math.min(areaTop + (areaH - dh) / 2, ch - dh);
         ctx.drawImage(imageToDraw, 0, 0, sw, sh, dx, dy, dw, dh);
+
+        // The frame background is lighter than the page, so feather the top and bottom edges into it.
+        const fade = dh * 0.3;
+        const top = ctx.createLinearGradient(0, dy, 0, dy + fade);
+        top.addColorStop(0, BG_HEX);
+        top.addColorStop(1, `${BG_HEX}00`);
+        ctx.fillStyle = top;
+        ctx.fillRect(0, dy - 1, cw, fade + 1);
+        const bottom = ctx.createLinearGradient(0, dy + dh - fade, 0, dy + dh);
+        bottom.addColorStop(0, `${BG_HEX}00`);
+        bottom.addColorStop(1, BG_HEX);
+        ctx.fillStyle = bottom;
+        ctx.fillRect(0, dy + dh - fade, cw, fade + 1);
       }
     },
     [lastIndex]
@@ -149,6 +169,11 @@ export function ScrollHero({ frames }: ScrollHeroProps) {
     if (!canvas || !container) return;
 
     updateMobile();
+
+    // offsetTop/offsetHeight ignore the scroll-driven y transforms, so the value stays stable.
+    copyBottomRef.current = Array.from(
+      container.querySelectorAll<HTMLElement>("[data-hero-copy]")
+    ).reduce((max, el) => Math.max(max, el.offsetTop + el.offsetHeight), 0);
 
     const rect = container.getBoundingClientRect();
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -172,6 +197,8 @@ export function ScrollHero({ frames }: ScrollHeroProps) {
     updateMobile();
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas, { passive: true });
+    // Web fonts change the text height after first paint; re-measure once they're in.
+    document.fonts?.ready.then(resizeCanvas);
     return () => window.removeEventListener("resize", resizeCanvas);
   }, [resizeCanvas, updateMobile]);
 
@@ -329,7 +356,7 @@ export function ScrollHero({ frames }: ScrollHeroProps) {
     <section
       ref={wrapperRef}
       id="hero-scroll"
-      className="relative w-full h-[500vh] bg-[#EAE1D2]"
+      className="relative w-full h-[350vh] md:h-[500vh] bg-[#EAE1D2]"
     >
       {/* 2px Terracotta Loading Progress Bar */}
       {loadingProgress < 100 && (
@@ -343,7 +370,7 @@ export function ScrollHero({ frames }: ScrollHeroProps) {
       {/* Sticky viewport container */}
       <div
         ref={stickyRef}
-        className="sticky top-0 h-screen w-full overflow-hidden bg-[#EAE1D2] flex items-center justify-center"
+        className="sticky top-0 h-[100svh] w-full overflow-hidden bg-[#EAE1D2] flex items-center justify-center"
       >
         {/* Canvas for sequence scrub animation with 300ms fade-in */}
         <canvas

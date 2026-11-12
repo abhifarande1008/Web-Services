@@ -53,6 +53,7 @@ export function HeroTextOverlays({ progress }: HeroTextOverlaysProps) {
     <div className="absolute inset-0 z-20 pointer-events-none flex flex-col justify-start pt-20 sm:pt-24 md:pt-28 px-4 sm:px-8 lg:px-16 max-w-7xl mx-auto w-full">
       {/* Intro Overlay */}
       <motion.div
+        data-hero-copy
         style={{ opacity: introOpacity, y: introY }}
         className="absolute top-20 sm:top-24 md:top-28 left-4 sm:left-8 lg:left-16 right-4 sm:right-auto max-w-xl text-center md:text-left mx-auto md:mx-0"
       >
@@ -72,6 +73,7 @@ export function HeroTextOverlays({ progress }: HeroTextOverlaysProps) {
 
       {/* Beat 1 Overlay */}
       <motion.div
+        data-hero-copy
         style={{ opacity: beat1Opacity, y: beat1Y }}
         className="absolute top-20 sm:top-24 md:top-28 left-4 sm:left-8 lg:left-16 right-4 sm:right-auto max-w-xl text-center md:text-left mx-auto md:mx-0"
       >
@@ -91,6 +93,7 @@ export function HeroTextOverlays({ progress }: HeroTextOverlaysProps) {
 
       {/* Beat 2 Overlay */}
       <motion.div
+        data-hero-copy
         style={{ opacity: beat2Opacity, y: beat2Y }}
         className="absolute top-20 sm:top-24 md:top-28 left-4 sm:left-8 lg:left-16 right-4 sm:right-auto max-w-xl text-center md:text-left mx-auto md:mx-0 pointer-events-auto"
       >
@@ -106,17 +109,17 @@ export function HeroTextOverlays({ progress }: HeroTextOverlaysProps) {
         <p className="text-sm sm:text-base md:text-lg text-[var(--muted)] leading-relaxed max-w-lg mb-6">
           {siteConfig.hero.beat2Sub}
         </p>
-        <div className="flex flex-col sm:flex-row items-center gap-3">
+        <div className="flex flex-row items-center justify-center md:justify-start gap-3">
           <a
             href="#contact"
-            className="btn-primary w-full sm:w-auto px-6 py-3 text-sm font-medium shadow-md"
+            className="btn-primary flex-1 sm:flex-none px-4 sm:px-6 py-3 text-sm font-medium shadow-md whitespace-nowrap"
           >
             <span>{siteConfig.hero.primaryCta}</span>
             <ArrowUpRight className="w-4 h-4" strokeWidth={1.5} />
           </a>
           <a
             href="#work"
-            className="btn-secondary w-full sm:w-auto px-6 py-3 text-sm font-medium"
+            className="btn-secondary flex-1 sm:flex-none px-4 sm:px-6 py-3 text-sm font-medium whitespace-nowrap bg-[var(--bg)]/80"
           >
             <span>{siteConfig.hero.secondaryCta}</span>
             <ArrowDown className="w-4 h-4" strokeWidth={1.5} />
