@@ -1,72 +1,143 @@
-"use client";
-
 import React from "react";
 import { siteConfig } from "@/content/site";
-import { ClayCard } from "./ClayCard";
 import { SectionHeading } from "./SectionHeading";
+import { Workbench, WindowBar, MiniLabel } from "./ui/Workbench";
 import { Check } from "lucide-react";
-import { motion, useReducedMotion } from "framer-motion";
+import { GrowX, Stagger, StaggerItem } from "./motion/Reveal";
+
+const WEEKS = 11;
+
+// Start and end week of each step for a typical custom software project, matching the
+// durations in siteConfig.process (Days 1–3, Week 1, Weeks 2–6, Launch week, 30 days).
+const SPANS: [number, number][] = [
+  [0, 0.5],
+  [0.5, 1.5],
+  [1.5, 6],
+  [6, 7],
+  [7, 11],
+];
+
+const pct = (w: number) => `${(w / WEEKS) * 100}%`;
+
+const gridLines = {
+  backgroundImage: `repeating-linear-gradient(to right, rgba(31,31,28,0.07) 0 1px, transparent 1px calc(100% / ${WEEKS}))`,
+};
 
 export function Process() {
-  const shouldReduceMotion = useReducedMotion();
+  const steps = siteConfig.process;
 
   return (
     <section id="process" className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      {/* Header */}
       <SectionHeading
         eyebrow="How we work"
         title="Five steps, no surprises"
-        intro="You know what's being built, when it will be ready and what you get at each step."
+        intro="You know what's being built, when it will be ready and what you get at each step. Here's how a typical custom software project runs."
       />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-5 relative">
-        {siteConfig.process.map((item, idx) => (
-          <motion.div
-            key={item.step}
-            initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-40px" }}
-            transition={{ duration: 0.5, delay: idx * 0.1, ease: "easeOut" }}
-            className="flex flex-col"
-          >
-            <ClayCard className="p-6 h-full flex flex-col justify-between">
-              <div>
-                <span className="block font-serif font-bold text-2xl text-[var(--terracotta)] mb-4">
-                  {item.step}
+      <Workbench>
+        <div className="clay-card overflow-hidden">
+          <WindowBar address="project-plan" />
+
+          {/* Gantt chart */}
+          <div className="px-4 sm:px-6 pt-5 pb-6">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+              <MiniLabel tone="terracotta">Typical custom software project</MiniLabel>
+              <div className="flex items-center gap-4 text-[11px] text-[var(--muted)]">
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="w-3 h-2 rounded-sm bg-[var(--terracotta)]" aria-hidden="true" /> Work
                 </span>
-
-                <div className="flex items-baseline justify-between gap-2 mb-2">
-                  <h3 className="font-serif text-xl font-semibold text-[var(--ink)]">
-                    {item.title}
-                  </h3>
-                </div>
-                <div className="inline-block px-2.5 py-1 rounded-md bg-[var(--bg)] border border-[var(--line)] text-xs text-[var(--muted)] mb-3">
-                  {item.duration}
-                </div>
-
-                <p className="text-sm text-[var(--muted)] leading-relaxed mb-6">
-                  {item.description}
-                </p>
-              </div>
-
-              {/* Deliverables */}
-              <div className="pt-4 border-t border-[var(--line)]">
-                <span className="text-xs font-semibold text-[var(--ink)] block mb-2.5">
-                  What you get
+                <span className="inline-flex items-center gap-1.5">
+                  <span
+                    className="w-3 h-2 rounded-sm"
+                    style={{ backgroundImage: "repeating-linear-gradient(135deg, #A9B8A0 0 2px, rgba(169,184,160,0.35) 2px 4px)" }}
+                    aria-hidden="true"
+                  />{" "}
+                  Included support
                 </span>
-                <ul className="flex flex-col gap-2">
-                  {item.deliverables.map((del, dIdx) => (
-                    <li key={dIdx} className="flex items-start gap-2 text-xs text-[var(--ink)] leading-snug">
-                      <Check className="w-3.5 h-3.5 text-[var(--sage)] shrink-0 mt-0.5" strokeWidth={2} />
-                      <span>{del}</span>
-                    </li>
-                  ))}
-                </ul>
               </div>
-            </ClayCard>
-          </motion.div>
-        ))}
-      </div>
+            </div>
+
+            {/* Week scale */}
+            <div className="hidden md:grid grid-cols-[13rem_1fr] gap-4 mb-1" aria-hidden="true">
+              <span />
+              <div className="grid font-mono text-[10px] text-[var(--muted)]" style={{ gridTemplateColumns: `repeat(${WEEKS}, 1fr)` }}>
+                {Array.from({ length: WEEKS }, (_, i) => (
+                  <span key={i} className="pl-1">W{i + 1}</span>
+                ))}
+              </div>
+            </div>
+
+            <ol className="flex flex-col">
+              {steps.map((step, i) => {
+                const [start, end] = SPANS[i] ?? [0, 1];
+                const isSupport = i === steps.length - 1;
+                return (
+                  <li
+                    key={step.step}
+                    className="grid grid-cols-1 md:grid-cols-[13rem_1fr] gap-x-4 gap-y-2 py-3 border-t border-[var(--line)] first:border-t-0 md:first:border-t"
+                  >
+                    <div className="flex items-baseline gap-3">
+                      <span className="font-mono text-xs text-[var(--terracotta)] tabular-nums">{step.step}</span>
+                      <span className="font-serif text-lg text-[var(--ink)]">{step.title}</span>
+                      <span className="ml-auto md:ml-0 text-xs text-[var(--muted)] whitespace-nowrap">{step.duration}</span>
+                    </div>
+                    <div className="relative h-7 rounded-md bg-[var(--bg)]/50" style={gridLines} aria-hidden="true">
+                      <GrowX
+                        delay={0.35 + start * 0.12}
+                        duration={0.9}
+                        className={`absolute top-1.5 bottom-1.5 rounded ${isSupport ? "" : "bg-[var(--terracotta)] shadow-[inset_0_1px_0_rgba(255,255,255,0.3)]"}`}
+                        style={{
+                          left: pct(start),
+                          width: `max(6px, calc(${pct(end)} - ${pct(start)}))`,
+                          ...(isSupport
+                            ? { backgroundImage: "repeating-linear-gradient(135deg, #A9B8A0 0 4px, rgba(169,184,160,0.35) 4px 8px)" }
+                            : {}),
+                        }}
+                      />
+                    </div>
+                  </li>
+                );
+              })}
+            </ol>
+            <p className="mt-3 text-xs text-[var(--muted)]">
+              Landing pages and websites move faster: about 1 to 3 weeks from first call to launch.
+            </p>
+          </div>
+
+          {/* What you get at each step */}
+          <div className="border-t border-[var(--line)] bg-[var(--bg)]/35 px-4 sm:px-6 py-5">
+            <MiniLabel className="mb-4">What you get at each step</MiniLabel>
+            <Stagger
+              as="ol"
+              stagger={0.08}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-px rounded-xl overflow-hidden border border-[var(--line)] bg-[var(--line)]"
+            >
+              {steps.map((step) => (
+                <StaggerItem
+                  as="li"
+                  key={step.step}
+                  y={16}
+                  className="bg-[var(--surface)] p-4 flex flex-col sm:last:col-span-2 lg:last:col-span-1 transition-colors hover:bg-[#FDFBF8]"
+                >
+                  <div className="flex items-baseline gap-2">
+                    <span className="font-mono text-[11px] text-[var(--terracotta)]">{step.step}</span>
+                    <h3 className="font-serif text-base text-[var(--ink)]">{step.title}</h3>
+                  </div>
+                  <p className="mt-2 text-xs text-[var(--muted)] leading-relaxed">{step.description}</p>
+                  <ul className="mt-3 pt-3 border-t border-[var(--line)] flex flex-col gap-1.5">
+                    {step.deliverables.map((d) => (
+                      <li key={d} className="flex items-start gap-2 text-xs text-[var(--ink)] leading-snug">
+                        <Check className="w-3.5 h-3.5 mt-px text-[#5E7356] shrink-0" strokeWidth={2.25} aria-hidden="true" />
+                        {d}
+                      </li>
+                    ))}
+                  </ul>
+                </StaggerItem>
+              ))}
+            </Stagger>
+          </div>
+        </div>
+      </Workbench>
     </section>
   );
 }

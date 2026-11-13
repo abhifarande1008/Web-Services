@@ -1,109 +1,112 @@
 "use client";
 
 import React from "react";
+import { motion } from "framer-motion";
 import { siteConfig } from "@/content/site";
-import { ClayCard } from "./ClayCard";
+import { Workbench, MiniLabel } from "./ui/Workbench";
+import { GrowX, Reveal, SplitText, Stagger, StaggerItem } from "./motion/Reveal";
+import { Tilt } from "./motion/Tilt";
 import { Mail, MapPin } from "lucide-react";
-import { motion, useReducedMotion } from "framer-motion";
-
-function initials(name: string) {
-  return name
-    .split(" ")
-    .map((part) => part[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-}
 
 export function About() {
-  const shouldReduceMotion = useReducedMotion();
   const { brand, about } = siteConfig;
 
   return (
-    <section id="about" className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
-      <motion.div
-        initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-40px" }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-      >
-        <ClayCard className="p-6 sm:p-10 lg:p-12">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
-            <div className="md:col-span-7 flex flex-col">
-              <p className="flex items-center gap-3 text-sm font-medium text-[var(--terracotta)] mb-3">
-                <span className="h-px w-8 bg-[var(--terracotta)]" aria-hidden="true" />
-                {about.title}
-              </p>
+    <section id="about" className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-10 lg:gap-16 items-center">
+        <div>
+          <Reveal y={12}>
+            <p className="flex items-center gap-3 text-sm font-medium text-[var(--terracotta)] mb-3">
+              <GrowX className="block h-px w-8 bg-[var(--terracotta)]" aria-hidden="true" delay={0.1} />
+              {about.title}
+            </p>
+          </Reveal>
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-[2.75rem] font-normal text-[var(--ink)] tracking-tight leading-[1.1]">
+            <SplitText text={about.headline} delay={0.05} />
+          </h2>
 
-              <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-normal text-[var(--ink)] tracking-tight leading-tight mb-5">
-                {about.headline}
-              </h2>
-
-              {about.paragraphs.map((paragraph) => (
-                <p
-                  key={paragraph.slice(0, 24)}
-                  className="text-base text-[var(--muted)] leading-relaxed mb-4 last:mb-0"
-                >
+          <div className="mt-6 flex flex-col gap-4 max-w-xl">
+            {about.paragraphs.map((paragraph, i) => (
+              <Reveal key={paragraph.slice(0, 24)} delay={0.25 + i * 0.12} y={20} blur>
+                <p className={`leading-relaxed ${i === 0 ? "text-lg text-[var(--ink)]" : "text-base text-[var(--muted)]"}`}>
                   {paragraph}
                 </p>
-              ))}
-            </div>
+              </Reveal>
+            ))}
+          </div>
 
-            <div className="md:col-span-5 flex flex-col gap-4">
-              <div className="rounded-2xl bg-[var(--bg)] border border-[var(--line)] p-5 sm:p-6">
-                <div className="flex items-center gap-4">
-                  <div
-                    className="w-14 h-14 shrink-0 rounded-full bg-[var(--ink)] text-[var(--surface)] flex items-center justify-center font-serif text-lg"
-                    aria-hidden="true"
-                  >
-                    {initials(brand.founder)}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="font-serif font-semibold text-lg text-[var(--ink)] leading-tight">
-                      {brand.founder}
-                    </p>
-                    <p className="text-sm text-[var(--muted)]">
-                      {brand.founderRole}, {brand.name}
-                    </p>
-                  </div>
-                </div>
+          <Stagger
+            as="dl"
+            stagger={0.1}
+            delay={0.4}
+            className="mt-8 grid grid-cols-3 gap-px rounded-2xl overflow-hidden border border-[var(--line)] bg-[var(--line)] max-w-xl"
+          >
+            {about.principles.map((item) => (
+              <StaggerItem key={item.label} y={16} className="bg-[var(--surface)] px-4 py-4 flex flex-col-reverse">
+                <dt className="mt-1 text-xs leading-snug text-[var(--muted)]">{item.label}</dt>
+                <dd className="font-serif text-xl sm:text-2xl text-[var(--ink)] leading-none">{item.value}</dd>
+              </StaggerItem>
+            ))}
+          </Stagger>
+        </div>
 
-                <ul className="mt-5 pt-5 border-t border-[var(--line)] flex flex-col gap-2.5 text-sm">
-                  <li>
-                    <a
-                      href={`mailto:${brand.email}`}
-                      className="inline-flex items-center gap-2 text-[var(--ink)] hover:text-[var(--terracotta)] transition-colors break-all"
-                    >
-                      <Mail className="w-4 h-4 shrink-0 text-[var(--terracotta)]" strokeWidth={1.5} />
-                      {brand.email}
-                    </a>
-                  </li>
-                  <li className="inline-flex items-center gap-2 text-[var(--muted)]">
-                    <MapPin className="w-4 h-4 shrink-0 text-[var(--terracotta)]" strokeWidth={1.5} />
+        <Workbench className="min-h-[360px] sm:min-h-[420px] flex items-center justify-center">
+          <Tilt max={8} className="relative w-[84%] sm:w-full max-w-[400px] my-10 sm:my-12">
+            {/* Back of the card */}
+            <motion.div
+              className="absolute inset-0 rounded-2xl bg-[var(--surface)] border border-[var(--line)] shadow-[0_16px_32px_-18px_rgba(31,31,28,0.35)] flex items-center justify-center"
+              aria-hidden="true"
+              initial={{ rotate: -3, x: 0, y: 0 }}
+              whileInView={{ rotate: 6, x: 12, y: -20 }}
+              viewport={{ once: true, margin: "0px 0px -20% 0px" }}
+              transition={{ type: "spring", stiffness: 90, damping: 14, delay: 0.6 }}
+            >
+              <span className="font-serif text-[5.5rem] leading-none text-[var(--terracotta)]/90">{brand.monogram}</span>
+              <span className="absolute bottom-4 right-5 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--muted)]">
+                {brand.descriptor}
+              </span>
+            </motion.div>
+
+            {/* Front of the card */}
+            <motion.div
+              className="relative min-h-[13rem] sm:aspect-[1.75/1] rounded-2xl bg-[var(--ink)] text-[var(--surface)] shadow-[0_24px_48px_-20px_rgba(31,31,28,0.6)] p-5 sm:p-6 flex flex-col"
+              initial={{ rotate: 0, y: 40, opacity: 0 }}
+              whileInView={{ rotate: -3, y: 0, opacity: 1 }}
+              viewport={{ once: true, margin: "0px 0px -20% 0px" }}
+              transition={{ type: "spring", stiffness: 80, damping: 15, delay: 0.35 }}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <span className="w-9 h-9 rounded-lg bg-[var(--terracotta)] text-[var(--surface)] flex items-center justify-center font-serif text-lg" aria-hidden="true">
+                  {brand.monogram}
+                </span>
+                <MiniLabel className="!text-[var(--surface)]/55 text-right">{brand.name}</MiniLabel>
+              </div>
+
+              <div className="mt-auto">
+                <p className="font-serif text-2xl sm:text-[1.75rem] leading-tight">{brand.founder}</p>
+                <p className="text-xs text-[var(--surface)]/60 mt-0.5">{brand.founderRole}</p>
+                <ul className="mt-4 pt-3 border-t border-white/10 flex flex-col gap-1.5 text-[11.5px] sm:text-xs">
+                  {brand.email && (
+                    <li>
+                      <a
+                        href={`mailto:${brand.email}`}
+                        className="inline-flex items-center gap-2 text-[var(--surface)]/90 hover:text-[#E8A27F] transition-colors break-all"
+                      >
+                        <Mail className="w-3.5 h-3.5 shrink-0 text-[#E8A27F]" strokeWidth={1.75} aria-hidden="true" />
+                        {brand.email}
+                      </a>
+                    </li>
+                  )}
+                  <li className="flex items-center gap-2 text-[var(--surface)]/60">
+                    <MapPin className="w-3.5 h-3.5 shrink-0 text-[#E8A27F]" strokeWidth={1.75} aria-hidden="true" />
                     {brand.location}
                   </li>
                 </ul>
               </div>
-
-              <dl className="grid grid-cols-3 gap-3">
-                {about.principles.map((item) => (
-                  <div
-                    key={item.label}
-                    className="p-3 rounded-xl bg-[var(--bg)]/50 border border-[var(--line)]/60 text-center flex flex-col-reverse"
-                  >
-                    <dt className="text-[11px] leading-snug text-[var(--muted)] mt-0.5">
-                      {item.label}
-                    </dt>
-                    <dd className="font-serif font-semibold text-base text-[var(--ink)]">
-                      {item.value}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-          </div>
-        </ClayCard>
-      </motion.div>
+            </motion.div>
+          </Tilt>
+        </Workbench>
+      </div>
     </section>
   );
 }

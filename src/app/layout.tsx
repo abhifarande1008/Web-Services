@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import { siteConfig } from "@/content/site";
+import { MotionProvider } from "@/components/motion/MotionProvider";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -75,7 +76,7 @@ export default function RootLayout({
         >
           Skip to content
         </a>
-        {children}
+        <MotionProvider>{children}</MotionProvider>
       </body>
     </html>
   );

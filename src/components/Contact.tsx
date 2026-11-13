@@ -2,8 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import { siteConfig } from "@/content/site";
-import { ClayCard } from "./ClayCard";
 import { SectionHeading } from "./SectionHeading";
+import { Workbench, WindowBar, MiniLabel } from "./ui/Workbench";
+import { motion } from "framer-motion";
+import { EASE, Stagger, StaggerItem } from "./motion/Reveal";
+import { Magnetic } from "./motion/Magnetic";
 import {
   Mail,
   MessageCircle,
@@ -13,6 +16,18 @@ import {
   AlertCircle,
   ArrowUpRight,
 } from "lucide-react";
+
+const rowClass =
+  "grid grid-cols-[5.5rem_1fr] sm:grid-cols-[7rem_1fr] items-center border-b border-[var(--line)] px-4 sm:px-6 transition-shadow focus-within:shadow-[inset_3px_0_0_var(--terracotta)] focus-within:bg-[var(--bg)]/30";
+const labelClass = "text-xs sm:text-[13px] text-[var(--muted)] py-3.5";
+const fieldClass =
+  "w-full min-w-0 bg-transparent py-3.5 text-sm text-[var(--ink)] placeholder:text-[var(--muted)]/60 focus:outline-none";
+
+const nextSteps = [
+  { title: "We reply within one working day", text: "With a few questions, or a time for a call." },
+  { title: "A free 20-minute call", text: "You walk us through how things work today." },
+  { title: "A fixed quote in writing", text: "Scope, timeline and price, before anything starts." },
+];
 
 export function Contact() {
   const [formData, setFormData] = useState({
@@ -24,7 +39,8 @@ export function Contact() {
     message: "",
   });
 
-  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "emailed" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [honeypot, setHoneypot] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   useEffect(() => {
     // Listen for prefill-service event from InteractiveNeeds and Packages sections
@@ -49,106 +65,98 @@ export function Contact() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const openEmailDraft = () => {
-    const subject = `Project enquiry: ${formData.service}`;
-    const body = [
-      `Name: ${formData.name}`,
-      `Email: ${formData.email}`,
-      `Phone / WhatsApp: ${formData.whatsapp || "-"}`,
-      `Service: ${formData.service}`,
-      `Budget: ${formData.budget}`,
-      "",
-      formData.message,
-    ].join("\n");
-    window.location.href = `mailto:${siteConfig.brand.email}?subject=${encodeURIComponent(
-      subject
-    )}&body=${encodeURIComponent(body)}`;
-  };
+  const { brand } = siteConfig;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
-
-    // Without a real Formspree form ID there is nowhere to POST, so hand the
-    // enquiry to the visitor's email app instead of pretending it was sent.
-    if (siteConfig.brand.formspreeEndpoint.includes("[FORMSPREE_ENDPOINT]")) {
-      openEmailDraft();
-      setStatus("emailed");
-      return;
-    }
-
     setStatus("submitting");
+
     try {
-      const response = await fetch(siteConfig.brand.formspreeEndpoint, {
+      const response = await fetch("/api/contact", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(formData),
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ ...formData, company: honeypot }),
       });
 
       if (response.ok) {
         setStatus("success");
+        setFormData((prev) => ({ ...prev, message: "" }));
       } else {
         const data = await response.json().catch(() => null);
-        setErrorMessage(
-          data?.error || `Your message couldn't be sent. Please email us at ${siteConfig.brand.email}.`
-        );
+        setErrorMessage(data?.error || "Your message couldn't be sent. Please try again in a minute.");
         setStatus("error");
       }
     } catch {
-      setErrorMessage(`Network error. Please email us at ${siteConfig.brand.email} or message us on WhatsApp.`);
+      setErrorMessage(
+        brand.whatsappLink
+          ? "Network error. Please try again, or message us on WhatsApp."
+          : "Network error. Please check your connection and try again."
+      );
       setStatus("error");
     }
   };
 
+  const channels = [
+    brand.email && {
+      icon: Mail,
+      title: "Email",
+      text: "Longer briefs, documents or screenshots.",
+      value: "Write to us",
+      href: `mailto:${brand.email}`,
+      external: false,
+    },
+    brand.whatsappLink && {
+      icon: MessageCircle,
+      title: "WhatsApp",
+      text: "A quick question or a voice note.",
+      value: "Message us",
+      href: brand.whatsappLink,
+      external: true,
+    },
+    brand.calendlyLink && {
+      icon: Calendar,
+      title: "Free 20-minute call",
+      text: "Pick a time that suits you.",
+      value: "Choose a time",
+      href: brand.calendlyLink,
+      external: true,
+    },
+  ].filter((c): c is Exclude<typeof c, "" | false | undefined> => Boolean(c));
+
   return (
     <section id="contact" className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      {/* Large Closing Headline */}
       <SectionHeading
-        align="center"
         eyebrow="Contact"
         title={siteConfig.contact.headline}
         intro={siteConfig.contact.subheading}
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
-        <div className="lg:col-span-7">
-          <ClayCard className="p-5 sm:p-10">
-            <div className="pb-6 border-b border-[var(--line)] mb-6">
-              <h3 className="font-serif text-2xl font-semibold text-[var(--ink)]">
-                Project enquiry
-              </h3>
-              <p className="text-sm text-[var(--muted)] mt-1">
-                A few lines is enough. We&apos;ll ask follow-up questions if we need to.
-              </p>
-            </div>
+      <Workbench>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-8 items-start">
+          {/* Compose window */}
+          <div className="lg:col-span-7 clay-card overflow-hidden">
+            <WindowBar>
+              <div className="flex-1 flex items-center justify-between min-w-0">
+                <span className="text-sm font-medium text-[var(--ink)]">New enquiry</span>
+                <div className="hidden sm:block">
+                  <MiniLabel tone="sage">Draft</MiniLabel>
+                </div>
+              </div>
+            </WindowBar>
 
-            {status === "success" || status === "emailed" ? (
-              <div className="py-12 flex flex-col items-center text-center">
-                <div className="w-14 h-14 rounded-full bg-[var(--sage)]/20 border border-[var(--sage)] flex items-center justify-center text-[var(--sage)] mb-4">
+            {status === "success" ? (
+              <div className="px-6 py-16 flex flex-col items-center text-center">
+                <div className="w-14 h-14 rounded-full bg-[var(--sage)]/20 border border-[var(--sage)] flex items-center justify-center text-[#5E7356] mb-4">
                   <CheckCircle2 className="w-8 h-8" strokeWidth={1.5} />
                 </div>
-                <h4 className="font-serif text-2xl font-semibold text-[var(--ink)] mb-2">
-                  {status === "success" ? "Thanks, we've got your message" : "Almost done"}
-                </h4>
+                <h3 className="font-serif text-2xl text-[var(--ink)] mb-2">
+                  Thanks, we&apos;ve got your message
+                </h3>
                 <p className="text-sm text-[var(--muted)] max-w-md leading-relaxed mb-6">
-                  {status === "success" ? (
-                    <>We&apos;ll get back to you within one working day.</>
-                  ) : (
-                    <>
-                      Your email app should have opened with your message filled in. Press send and
-                      we&apos;ll reply within one working day. If nothing opened, write to us at{" "}
-                      <a
-                        href={`mailto:${siteConfig.brand.email}`}
-                        className="text-[var(--ink)] underline underline-offset-2 break-all"
-                      >
-                        {siteConfig.brand.email}
-                      </a>
-                      .
-                    </>
-                  )}
+                  We&apos;ll reply to{" "}
+                  <span className="text-[var(--ink)] break-all">{formData.email}</span> within one
+                  working day.
                 </p>
                 <button
                   type="button"
@@ -159,81 +167,106 @@ export function Contact() {
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+              <form onSubmit={handleSubmit}>
+                <div className="absolute -left-[9999px] w-px h-px overflow-hidden" aria-hidden="true">
+                  <label htmlFor="company">Company</label>
+                  <input
+                    id="company"
+                    name="company"
+                    type="text"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={honeypot}
+                    onChange={(e) => setHoneypot(e.target.value)}
+                  />
+                </div>
                 {status === "error" && (
-                  <div className="p-4 rounded-xl bg-[var(--terracotta)]/10 border border-[var(--terracotta)]/30 flex items-start gap-3 text-xs text-[var(--terracotta)]">
+                  <div className="mx-4 sm:mx-6 mt-4 p-4 rounded-xl bg-[var(--terracotta)]/10 border border-[var(--terracotta)]/30 flex items-start gap-3 text-xs text-[var(--terracotta)]">
                     <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" strokeWidth={1.5} />
                     <span>{errorMessage}</span>
                   </div>
                 )}
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Name */}
-                  <div className="flex flex-col gap-1.5">
-                    <label htmlFor="name" className="text-sm text-[var(--ink)] font-medium">
-                      Your name *
-                    </label>
-                    <input
-                      id="name"
-                      name="name"
-                      type="text"
-                      required
-                      value={formData.name}
-                      onChange={handleChange}
-                      autoComplete="name"
-                      placeholder="Full name"
-                      className="w-full px-4 py-3 rounded-xl bg-[var(--bg)]/60 border border-[var(--line)] text-sm text-[var(--ink)] placeholder:text-[var(--muted)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--terracotta)]"
-                    />
-                  </div>
-
-                  {/* Email */}
-                  <div className="flex flex-col gap-1.5">
-                    <label htmlFor="email" className="text-sm text-[var(--ink)] font-medium">
-                      Email *
-                    </label>
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      required
-                      value={formData.email}
-                      onChange={handleChange}
-                      autoComplete="email"
-                      placeholder="you@company.com"
-                      className="w-full px-4 py-3 rounded-xl bg-[var(--bg)]/60 border border-[var(--line)] text-sm text-[var(--ink)] placeholder:text-[var(--muted)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--terracotta)]"
-                    />
-                  </div>
+                <div className={rowClass}>
+                  <span className={labelClass}>To</span>
+                  <span className="py-3.5 min-w-0">
+                    <span className="inline-flex max-w-full items-center gap-1.5 rounded-full bg-[var(--bg)] border border-[var(--line)] pl-1 pr-2.5 py-0.5 text-xs text-[var(--ink)]">
+                      <span className="w-5 h-5 shrink-0 rounded-full bg-[var(--ink)] text-[var(--surface)] flex items-center justify-center font-serif text-[11px]" aria-hidden="true">
+                        {brand.monogram}
+                      </span>
+                      <span className="truncate">{brand.name}</span>
+                    </span>
+                  </span>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* WhatsApp */}
-                  <div className="flex flex-col gap-1.5">
-                    <label htmlFor="whatsapp" className="text-sm text-[var(--ink)] font-medium">
-                      Phone or WhatsApp
-                    </label>
-                    <input
-                      id="whatsapp"
-                      name="whatsapp"
-                      type="tel"
-                      value={formData.whatsapp}
-                      onChange={handleChange}
-                      autoComplete="tel"
-                      placeholder="+91"
-                      className="w-full px-4 py-3 rounded-xl bg-[var(--bg)]/60 border border-[var(--line)] text-sm text-[var(--ink)] placeholder:text-[var(--muted)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--terracotta)]"
-                    />
-                  </div>
+                <div className={rowClass}>
+                  <span className={labelClass}>Subject</span>
+                  <span className="py-3.5 text-sm font-medium text-[var(--ink)] truncate" aria-live="polite">
+                    Project enquiry: {formData.service}
+                  </span>
+                </div>
 
-                  {/* Service Dropdown */}
-                  <div className="flex flex-col gap-1.5">
-                    <label htmlFor="service" className="text-sm text-[var(--ink)] font-medium">
-                      What do you need? *
+                <div className={rowClass}>
+                  <label htmlFor="name" className={labelClass}>
+                    Name *
+                  </label>
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={handleChange}
+                    autoComplete="name"
+                    placeholder="Full name"
+                    className={fieldClass}
+                  />
+                </div>
+
+                <div className={rowClass}>
+                  <label htmlFor="email" className={labelClass}>
+                    Email *
+                  </label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={handleChange}
+                    autoComplete="email"
+                    placeholder="you@company.com"
+                    className={fieldClass}
+                  />
+                </div>
+
+                <div className={rowClass}>
+                  <label htmlFor="whatsapp" className={labelClass}>
+                    Phone
+                  </label>
+                  <input
+                    id="whatsapp"
+                    name="whatsapp"
+                    type="tel"
+                    value={formData.whatsapp}
+                    onChange={handleChange}
+                    autoComplete="tel"
+                    placeholder="Phone or WhatsApp, optional"
+                    className={fieldClass}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2">
+                  <div className={`${rowClass} sm:border-r`}>
+                    <label htmlFor="service" className={labelClass}>
+                      Need *
                     </label>
                     <select
                       id="service"
                       name="service"
                       value={formData.service}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-xl bg-[var(--bg)]/60 border border-[var(--line)] text-sm text-[var(--ink)] focus:outline-none focus:ring-2 focus:ring-[var(--terracotta)] cursor-pointer"
+                      className={`${fieldClass} cursor-pointer`}
                     >
                       {siteConfig.contact.serviceOptions.map((opt) => (
                         <option key={opt} value={opt}>
@@ -242,130 +275,133 @@ export function Contact() {
                       ))}
                     </select>
                   </div>
+                  <div className={rowClass}>
+                    <label htmlFor="budget" className={labelClass}>
+                      Budget *
+                    </label>
+                    <select
+                      id="budget"
+                      name="budget"
+                      value={formData.budget}
+                      onChange={handleChange}
+                      className={`${fieldClass} cursor-pointer`}
+                    >
+                      {siteConfig.contact.budgetRanges.map((b) => (
+                        <option key={b} value={b}>
+                          {b}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
-                {/* Budget Range Dropdown */}
-                <div className="flex flex-col gap-1.5">
-                  <label htmlFor="budget" className="text-sm text-[var(--ink)] font-medium">
-                    Rough budget *
-                  </label>
-                  <select
-                    id="budget"
-                    name="budget"
-                    value={formData.budget}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-xl bg-[var(--bg)]/60 border border-[var(--line)] text-sm text-[var(--ink)] focus:outline-none focus:ring-2 focus:ring-[var(--terracotta)] cursor-pointer"
-                  >
-                    {siteConfig.contact.budgetRanges.map((b) => (
-                      <option key={b} value={b}>
-                        {b}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Message */}
-                <div className="flex flex-col gap-1.5">
-                  <label htmlFor="message" className="text-sm text-[var(--ink)] font-medium">
+                <div className="px-4 sm:px-6 pt-4 transition-shadow focus-within:shadow-[inset_3px_0_0_var(--terracotta)]">
+                  <label htmlFor="message" className="sr-only">
                     Tell us about the project *
                   </label>
                   <textarea
                     id="message"
                     name="message"
-                    rows={4}
+                    rows={6}
                     required
                     value={formData.message}
                     onChange={handleChange}
-                    placeholder="What does your business do, and what would you like to build or fix?"
-                    className="w-full px-4 py-3 rounded-xl bg-[var(--bg)]/60 border border-[var(--line)] text-sm text-[var(--ink)] placeholder:text-[var(--muted)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--terracotta)] resize-y"
+                    placeholder="What does your business do, and what would you like to build or fix? A few lines is enough."
+                    className="w-full bg-transparent text-sm sm:text-[15px] leading-relaxed text-[var(--ink)] placeholder:text-[var(--muted)]/60 focus:outline-none resize-y"
                   />
                 </div>
 
-                {/* Submit button */}
-                <button
-                  type="submit"
-                  disabled={status === "submitting"}
-                  className="btn-primary w-full py-3.5 text-sm font-medium justify-center cursor-pointer disabled:opacity-50 mt-2"
-                >
-                  {status === "submitting" ? (
-                    <span>Sending…</span>
-                  ) : (
-                    <>
-                      <span>Send enquiry</span>
-                      <Send className="w-4 h-4" strokeWidth={1.5} />
-                    </>
-                  )}
-                </button>
+                <div className="flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-3 px-4 sm:px-6 py-4 border-t border-[var(--line)] bg-[var(--bg)]/40">
+                  <p className="text-xs text-[var(--muted)]">{brand.responseTime}.</p>
+                  <Magnetic strength={0.2} className="w-full sm:w-auto">
+                  <button
+                    type="submit"
+                    disabled={status === "submitting"}
+                    className="btn-primary w-full sm:w-auto py-3 px-6 text-sm font-medium justify-center cursor-pointer disabled:opacity-50"
+                  >
+                    {status === "submitting" ? (
+                      <span>Sending…</span>
+                    ) : (
+                      <>
+                        <span>Send enquiry</span>
+                        <Send className="w-4 h-4" strokeWidth={1.5} />
+                      </>
+                    )}
+                  </button>
+                  </Magnetic>
+                </div>
               </form>
             )}
-          </ClayCard>
+          </div>
+
+          {/* What happens next + other channels */}
+          <div className="lg:col-span-5 flex flex-col gap-4 sm:gap-6">
+            <div className="clay-card p-5 sm:p-6">
+              <MiniLabel tone="terracotta">What happens next</MiniLabel>
+              <Stagger as="ol" stagger={0.2} delay={0.3} className="mt-5 relative">
+                <motion.span
+                  className="absolute left-[11px] top-3 bottom-3 w-px bg-[var(--line)] origin-top"
+                  aria-hidden="true"
+                  variants={{ hidden: { scaleY: 0 }, show: { scaleY: 1, transition: { duration: 1.2, ease: EASE } } }}
+                />
+                {nextSteps.map((step, i) => (
+                  <StaggerItem as="li" key={step.title} y={0} x={-12} className="relative grid grid-cols-[1.5rem_1fr] gap-3 pb-5 last:pb-0">
+                    <span
+                      className={`relative z-10 w-6 h-6 rounded-full flex items-center justify-center font-mono text-[10px] ${
+                        i === 0
+                          ? "bg-[var(--terracotta)] text-[var(--surface)]"
+                          : "bg-[var(--surface)] border border-[var(--line)] text-[var(--muted)]"
+                      }`}
+                      aria-hidden="true"
+                    >
+                      {i + 1}
+                    </span>
+                    <div>
+                      <p className="text-sm font-semibold text-[var(--ink)] leading-6">{step.title}</p>
+                      <p className="text-sm text-[var(--muted)] leading-relaxed">{step.text}</p>
+                    </div>
+                  </StaggerItem>
+                ))}
+              </Stagger>
+            </div>
+
+            {channels.length > 0 && (
+            <div className="clay-card overflow-hidden">
+              <div className="px-5 sm:px-6 pt-5 pb-3">
+                <MiniLabel tone="sage">Prefer another way?</MiniLabel>
+              </div>
+              <Stagger as="ul" stagger={0.1} delay={0.4} className="flex flex-col gap-px bg-[var(--line)] border-t border-[var(--line)]">
+                {channels.map(({ icon: Icon, title, text, value, href, external }) => (
+                  <StaggerItem as="li" key={title} y={12} className="bg-[var(--surface)]">
+                    <a
+                      href={href}
+                      {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                      className="group grid grid-cols-[2.25rem_1fr_auto] items-center gap-3 px-5 sm:px-6 py-4 hover:bg-[var(--bg)]/40 transition-colors"
+                    >
+                      <span className="w-9 h-9 rounded-lg bg-[var(--bg)] border border-[var(--line)] flex items-center justify-center text-[var(--terracotta)]">
+                        <Icon className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block text-sm font-semibold text-[var(--ink)]">{title}</span>
+                        <span className="block text-xs text-[var(--muted)] truncate">{text}</span>
+                        <span className="block mt-0.5 text-[13px] text-[var(--ink)] group-hover:text-[var(--terracotta)] transition-colors break-all">
+                          {value}
+                        </span>
+                      </span>
+                      <ArrowUpRight
+                        className="w-4 h-4 text-[var(--muted)] group-hover:text-[var(--terracotta)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all"
+                        strokeWidth={1.5}
+                        aria-hidden="true"
+                      />
+                    </a>
+                  </StaggerItem>
+                ))}
+              </Stagger>
+            </div>
+            )}
+          </div>
         </div>
-
-        <div className="lg:col-span-5 flex flex-col gap-5">
-          <ClayCard className="p-6">
-            <div className="w-10 h-10 mb-4 rounded-xl bg-[var(--bg)] border border-[var(--line)] flex items-center justify-center text-[var(--terracotta)]">
-              <Mail className="w-5 h-5" strokeWidth={1.5} />
-            </div>
-            <h4 className="font-serif text-lg font-semibold text-[var(--ink)] mb-1">Email us</h4>
-            <p className="text-sm text-[var(--muted)] mb-4">
-              Good for longer briefs, documents or screenshots of what you use today.
-            </p>
-            <a
-              href={`mailto:${siteConfig.brand.email}`}
-              className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--ink)] hover:text-[var(--terracotta)] transition-colors break-all"
-            >
-              <span>{siteConfig.brand.email}</span>
-              <ArrowUpRight className="w-4 h-4 shrink-0" strokeWidth={1.5} />
-            </a>
-          </ClayCard>
-
-          <ClayCard className="p-6">
-            <div className="w-10 h-10 mb-4 rounded-xl bg-[var(--bg)] border border-[var(--line)] flex items-center justify-center text-[var(--sage)]">
-              <MessageCircle className="w-5 h-5" strokeWidth={1.5} />
-            </div>
-            <h4 className="font-serif text-lg font-semibold text-[var(--ink)] mb-1">WhatsApp</h4>
-            <p className="text-sm text-[var(--muted)] mb-4">
-              For a quick question, or if you&apos;d rather send a voice note.
-            </p>
-            <a
-              href={siteConfig.brand.whatsappLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--ink)] hover:text-[var(--terracotta)] transition-colors"
-            >
-              <span>{siteConfig.brand.whatsappNumber}</span>
-              <ArrowUpRight className="w-4 h-4 shrink-0" strokeWidth={1.5} />
-            </a>
-          </ClayCard>
-
-          <ClayCard className="p-6">
-            <div className="w-10 h-10 mb-4 rounded-xl bg-[var(--bg)] border border-[var(--line)] flex items-center justify-center text-[var(--ink)]">
-              <Calendar className="w-5 h-5" strokeWidth={1.5} />
-            </div>
-            <h4 className="font-serif text-lg font-semibold text-[var(--ink)] mb-1">
-              Book a free 20-minute call
-            </h4>
-            <p className="text-sm text-[var(--muted)] mb-4">
-              {siteConfig.brand.calendlyLink
-                ? "Pick a time that suits you and we'll talk through what you need."
-                : "Email us two or three times that suit you and we'll send a meeting invite."}
-            </p>
-            <a
-              href={
-                siteConfig.brand.calendlyLink ||
-                `mailto:${siteConfig.brand.email}?subject=${encodeURIComponent("Call request")}`
-              }
-              {...(siteConfig.brand.calendlyLink
-                ? { target: "_blank", rel: "noopener noreferrer" }
-                : {})}
-              className="btn-secondary w-full text-sm py-3 justify-center font-medium"
-            >
-              <span>{siteConfig.brand.calendlyLink ? "Choose a time" : "Request a call"}</span>
-              <ArrowUpRight className="w-4 h-4" strokeWidth={1.5} />
-            </a>
-          </ClayCard>
-        </div>
-      </div>
+      </Workbench>
     </section>
   );
 }

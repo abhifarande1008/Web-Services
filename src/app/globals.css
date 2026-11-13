@@ -44,8 +44,10 @@ body {
   overflow-x: clip;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-fraunces), Georgia, serif;
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-fraunces), Georgia, serif;
+  }
 }
 
 /* Kept in the components layer so Tailwind utilities (padding, borders) can override them. */
@@ -129,6 +131,108 @@ h1, h2, h3, h4, h5, h6 {
 .btn-secondary:active {
   transform: translateY(1px);
 }
+}
+
+/* Slim scrollbar in the site palette that sits on the page instead of a grey gutter. */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgba(31, 31, 28, 0.28);
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--terracotta);
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+@supports (-moz-appearance: none) {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(31, 31, 28, 0.35) transparent;
+  }
+}
+
+/* Lenis smooth scrolling: it animates the scroll itself, so native smoothing must be off. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+html.lenis {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+.lenis [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+/* Soft light that follows the pointer across cards (position fed by MotionProvider). */
+@media (hover: hover) and (pointer: fine) {
+  .clay-card {
+    background-image: radial-gradient(
+      520px circle at var(--mx, -999px) var(--my, -999px),
+      rgba(200, 100, 60, 0.07),
+      transparent 45%
+    );
+  }
+}
+
+/* A light sweep that crosses highlighted badges every few seconds. */
+.badge-shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.55) 50%, transparent 70%);
+  transform: translateX(-120%);
+  animation: badge-shine 3.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+@keyframes badge-shine {
+  0%, 55% { transform: translateX(-120%); }
+  100% { transform: translateX(120%); }
+}
+
+/* Underline that draws in from the left on hover. */
+.footer-link {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.45s cubic-bezier(0.22, 1, 0.36, 1), color 0.2s ease;
+}
+.footer-link:hover {
+  background-size: 100% 1px;
+}
+
+.caret-blink {
+  animation: caret-blink 1.05s steps(1) infinite;
+}
+@keyframes caret-blink {
+  50% { opacity: 0; }
+}
+
+/* Footer curtain: the page lifts away to reveal a footer pinned underneath.
+   Only on screens tall enough to show the whole footer. */
+@media (min-width: 1024px) and (min-height: 820px) {
+  .page-curtain {
+    position: relative;
+    z-index: 10;
+    border-bottom-left-radius: 48px;
+    border-bottom-right-radius: 48px;
+    box-shadow: 0 40px 80px -30px rgba(31, 31, 28, 0.45);
+  }
+  .footer-reveal {
+    position: sticky;
+    bottom: 0;
+    z-index: 0;
+  }
 }
 
 /* Reduced motion preference */

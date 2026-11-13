@@ -3,6 +3,8 @@
 import React, { useRef, useState } from "react";
 import { siteConfig } from "@/content/site";
 import { SectionHeading } from "./SectionHeading";
+import { Workbench } from "./ui/Workbench";
+import { scrollToSection } from "@/lib/scroll";
 import { ArrowRight, Check } from "lucide-react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
@@ -67,7 +69,7 @@ export function InteractiveNeeds() {
 
   const handleDiscussClick = (servicePrefill: string) => {
     window.dispatchEvent(new CustomEvent("prefill-service", { detail: servicePrefill }));
-    document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+    scrollToSection("contact");
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
@@ -91,13 +93,7 @@ export function InteractiveNeeds() {
         intro="Pick what you're trying to fix. We'll show you what we'd typically build, what's included and how long it takes."
       />
 
-      <div
-        className="rounded-[28px] border border-[var(--line)] bg-[#E3D9C8]/55 p-3 sm:p-6 lg:p-8"
-        style={{
-          backgroundImage: "radial-gradient(rgba(31,31,28,0.09) 1px, transparent 1px)",
-          backgroundSize: "18px 18px",
-        }}
-      >
+      <Workbench>
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,19rem)_1fr] gap-4 sm:gap-6">
           {/* Problem picker */}
           <div>
@@ -240,7 +236,7 @@ export function InteractiveNeeds() {
             </AnimatePresence>
           </div>
         </div>
-      </div>
+      </Workbench>
     </section>
   );
 }

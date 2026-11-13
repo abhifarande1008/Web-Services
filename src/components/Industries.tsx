@@ -1,10 +1,8 @@
-"use client";
-
 import React from "react";
-import { siteConfig, IndustryItem } from "@/content/site";
-import { ClayCard } from "./ClayCard";
+import { siteConfig } from "@/content/site";
 import { SectionHeading } from "./SectionHeading";
-import { motion, useReducedMotion } from "framer-motion";
+import { Workbench, WindowBar } from "./ui/Workbench";
+import { Stagger, StaggerItem } from "./motion/Reveal";
 import {
   Stethoscope,
   Store,
@@ -28,64 +26,107 @@ const industryIconMap: Record<string, LucideIcon> = {
   Briefcase,
 };
 
-function IndustryTile({ industry, index }: { industry: IndustryItem; index: number }) {
-  const IconComponent = industryIconMap[industry.iconName] || Briefcase;
-  const shouldReduceMotion = useReducedMotion();
-
-  return (
-    <motion.div
-      initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.5, delay: index * 0.05, ease: "easeOut" }}
-      className="h-full"
-    >
-      <ClayCard className="p-6 h-full flex flex-col justify-between">
-        <div>
-          <div className="w-10 h-10 mb-4 rounded-xl bg-[var(--bg)] border border-[var(--line)] flex items-center justify-center text-[var(--terracotta)]">
-            <IconComponent className="w-5 h-5" strokeWidth={1.5} />
-          </div>
-
-          <h3 className="font-serif text-xl font-semibold text-[var(--ink)] mb-2">
-            {industry.title}
-          </h3>
-          <p className="text-sm text-[var(--muted)] leading-relaxed mb-4">
-            {industry.description}
-          </p>
-        </div>
-
-        <div className="mt-2 pt-4 border-t border-[var(--line)]">
-          <span className="block text-xs font-medium text-[var(--muted)] mb-1.5">
-            For example
-          </span>
-          <div className="p-3 rounded-xl bg-[var(--bg)]/60 border border-[var(--line)]">
-            <p className="text-xs font-semibold text-[var(--ink)] mb-1">
-              {industry.exampleModule.name}
-            </p>
-            <p className="text-[11px] text-[var(--muted)] leading-relaxed">
-              {industry.exampleModule.details}
-            </p>
-          </div>
-        </div>
-      </ClayCard>
-    </motion.div>
-  );
-}
+// Row number, industry, who it's for, typical first build.
+const ROW_GRID = "grid grid-cols-[2.25rem_1fr] md:grid-cols-[2.75rem_minmax(0,1.1fr)_minmax(0,1fr)_minmax(0,1.5fr)]";
+const CELL = "px-4 py-3.5 md:border-r border-[var(--line)] last:border-r-0";
 
 export function Industries() {
+  const industries = siteConfig.industries;
+
   return (
     <section id="industries" className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <SectionHeading
         eyebrow="Industries"
         title="Who we work with"
-        intro="Every business runs a little differently. Here are a few examples of what we build for different kinds of businesses."
+        intro="Most of the businesses we help run on spreadsheets today, so here they are in one. Each row shows what we'd typically build first."
       />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {siteConfig.industries.map((ind, idx) => (
-          <IndustryTile key={ind.id} industry={ind} index={idx} />
-        ))}
-      </div>
+      <Workbench>
+        <div className="clay-card overflow-hidden">
+          <WindowBar address="industries.xlsx" />
+
+          {/* Formula bar */}
+          <div className="hidden md:flex items-center border-b border-[var(--line)] text-xs" aria-hidden="true">
+            <span className="w-[2.75rem] shrink-0 py-2 text-center font-mono text-[var(--muted)] border-r border-[var(--line)] bg-[var(--bg)]/50">
+              C1
+            </span>
+            <span className="px-3 py-2 font-mono italic text-[var(--terracotta)] border-r border-[var(--line)]">fx</span>
+            <span className="px-3 py-2 text-[var(--ink)]">Typical first build</span>
+          </div>
+
+          <div role="table" aria-label="Industries and what we typically build first" className="text-sm">
+            {/* Column letters */}
+            <div className={`${ROW_GRID} hidden md:grid bg-[var(--bg)]/50 border-b border-[var(--line)]`} aria-hidden="true">
+              {["", "A", "B", "C"].map((letter) => (
+                <span key={letter || "corner"} className="py-1 text-center font-mono text-[10px] text-[var(--muted)] border-r border-[var(--line)] last:border-r-0">
+                  {letter}
+                </span>
+              ))}
+            </div>
+
+            {/* Header row */}
+            <div role="row" className={`${ROW_GRID} hidden md:grid border-b border-[var(--line)] bg-[var(--surface)]`}>
+              <span role="columnheader" className="py-3 text-center font-mono text-[11px] text-[var(--muted)] bg-[var(--bg)]/50 border-r border-[var(--line)]">
+                <span className="sr-only">Row</span>1
+              </span>
+              {["Industry", "Who it's for", "Typical first build"].map((h) => (
+                <span key={h} role="columnheader" className={`${CELL} font-sans text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]`}>
+                  {h}
+                </span>
+              ))}
+            </div>
+
+            <Stagger role="rowgroup" stagger={0.07} delay={0.3}>
+            {industries.map((industry, i) => {
+              const Icon = industryIconMap[industry.iconName] || Briefcase;
+              return (
+                <StaggerItem
+                  key={industry.id}
+                  role="row"
+                  y={0}
+                  x={-20}
+                  className={`${ROW_GRID} group border-b border-[var(--line)] last:border-b-0 bg-[var(--surface)] transition-colors hover:bg-[#F6EFE4]`}
+                >
+                  <span
+                    role="cell"
+                    className="row-span-3 md:row-span-1 pt-4 md:py-3.5 text-center font-mono text-[11px] text-[var(--muted)] bg-[var(--bg)]/50 border-r border-[var(--line)] transition-colors group-hover:text-[var(--terracotta)] group-hover:bg-[var(--terracotta)]/10"
+                  >
+                    {i + 2}
+                  </span>
+                  <div role="cell" className={`${CELL} pb-1 md:pb-3.5 flex items-center gap-3`}>
+                    <span className="w-8 h-8 shrink-0 rounded-lg bg-[var(--terracotta)]/10 text-[var(--terracotta)] flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:bg-[var(--terracotta)] group-hover:text-[var(--surface)] group-hover:-rotate-6">
+                      <Icon className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />
+                    </span>
+                    <span className="font-serif text-base text-[var(--ink)] leading-snug">{industry.title}</span>
+                  </div>
+                  <div role="cell" className={`${CELL} col-start-2 md:col-start-auto py-1 md:py-3.5 text-[var(--muted)] leading-relaxed flex items-center`}>
+                    {industry.description}
+                  </div>
+                  <div role="cell" className={`${CELL} col-start-2 md:col-start-auto pt-1 md:pt-3.5`}>
+                    <p className="font-medium text-[var(--ink)] leading-snug">{industry.exampleModule.name}</p>
+                    <p className="mt-0.5 text-xs text-[var(--muted)] leading-relaxed">{industry.exampleModule.details}</p>
+                  </div>
+                </StaggerItem>
+              );
+            })}
+            </Stagger>
+          </div>
+
+          {/* Sheet tabs */}
+          <div className="flex items-center gap-1 px-3 py-2 border-t border-[var(--line)] bg-[var(--bg)]/45 text-xs" aria-hidden="true">
+            <span className="px-3 py-1 rounded-md bg-[var(--surface)] border border-[var(--line)] text-[var(--ink)] font-medium">Industries</span>
+            <span className="px-3 py-1 text-[var(--muted)]">Your business</span>
+            <span className="ml-auto font-mono text-[10px] text-[var(--muted)]">{industries.length} rows</span>
+          </div>
+        </div>
+
+        <p className="mt-5 sm:mt-6 text-center text-sm text-[var(--muted)]">
+          Don&apos;t see your industry? The same building blocks fit most businesses.{" "}
+          <a href="#contact" className="font-medium text-[var(--ink)] underline underline-offset-4 decoration-[var(--terracotta)] hover:text-[var(--terracotta)]">
+            Tell us how you work
+          </a>
+        </p>
+      </Workbench>
     </section>
   );
 }

@@ -1,6 +1,8 @@
 import React from "react";
 import { siteConfig } from "@/content/site";
 import { SectionHeading } from "./SectionHeading";
+import { Workbench, WindowBar, MiniLabel } from "./ui/Workbench";
+import { Stagger, StaggerItem } from "./motion/Reveal";
 import {
   Zap,
   Target,
@@ -17,7 +19,6 @@ import {
   Workflow,
   Webhook,
   Smartphone,
-  Lock,
   ArrowDown,
   ArrowRight,
   Plus,
@@ -48,36 +49,6 @@ const flows = [
   { from: "Booking page", to: "Calendar and reminder" },
 ];
 
-function WindowBar({ address }: { address: string }) {
-  return (
-    <div className="flex items-center gap-3 px-4 py-3 border-b border-[var(--line)] bg-[var(--bg)]/45" aria-hidden="true">
-      <div className="flex gap-1.5 w-12 shrink-0">
-        <span className="w-2.5 h-2.5 rounded-full bg-[var(--terracotta)]/70" />
-        <span className="w-2.5 h-2.5 rounded-full bg-[var(--sage)]" />
-        <span className="w-2.5 h-2.5 rounded-full bg-[var(--line)]" />
-      </div>
-      <div className="flex-1 flex justify-center min-w-0">
-        <div className="flex items-center justify-center gap-1.5 w-full max-w-[240px] px-3 py-1 rounded-md bg-[var(--surface)] border border-[var(--line)] text-[11px] text-[var(--muted)] truncate">
-          <Lock className="w-3 h-3 shrink-0" strokeWidth={1.75} />
-          <span className="truncate">{address}</span>
-        </div>
-      </div>
-      <span className="w-12 shrink-0" />
-    </div>
-  );
-}
-
-function LayerLabel({ tone, children }: { tone: "terracotta" | "sage"; children: React.ReactNode }) {
-  return (
-    <p className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
-      <span
-        className={`w-2 h-2 rounded-full ${tone === "terracotta" ? "bg-[var(--terracotta)]" : "bg-[var(--sage)]"}`}
-      />
-      {children}
-    </p>
-  );
-}
-
 function WebsitesPanel() {
   const items = siteConfig.services.web;
   return (
@@ -85,18 +56,20 @@ function WebsitesPanel() {
       <WindowBar address="yourbusiness.in" />
       <div className="px-5 sm:px-8 pt-6 pb-4 lg:flex lg:items-end lg:justify-between lg:gap-10">
         <div>
-          <LayerLabel tone="terracotta">Front of house</LayerLabel>
+          <MiniLabel tone="terracotta">Front of house</MiniLabel>
           <h3 className="mt-2 font-serif text-2xl sm:text-3xl text-[var(--ink)] tracking-tight">Websites</h3>
         </div>
         <p className="mt-1.5 lg:mt-0 lg:max-w-sm text-sm text-[var(--muted)] leading-relaxed">
           What your customers see: pages that explain your business and get people to contact you.
         </p>
       </div>
-      <ol className="px-5 sm:px-8 pb-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 sm:gap-x-8">
+      <Stagger as="ol" stagger={0.06} delay={0.3} className="px-5 sm:px-8 pb-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 sm:gap-x-8">
         {items.map((service, i) => {
           const Icon = iconMap[service.iconName] || Globe;
           return (
-            <li
+            <StaggerItem
+              as="li"
+              y={18}
               key={service.id}
               className="group grid grid-cols-[1.5rem_1fr] sm:grid-cols-[2rem_1fr_auto] gap-x-3 py-3.5 sm:py-4 border-t border-[var(--line)]"
             >
@@ -112,10 +85,10 @@ function WebsitesPanel() {
                 strokeWidth={1.5}
                 aria-hidden="true"
               />
-            </li>
+            </StaggerItem>
           );
         })}
-      </ol>
+      </Stagger>
     </div>
   );
 }
@@ -150,7 +123,7 @@ function SoftwarePanel() {
           <div className="flex items-end justify-between gap-6 mb-5">
             <div className="lg:flex lg:items-end lg:gap-10">
               <div className="shrink-0">
-                <LayerLabel tone="sage">Back office</LayerLabel>
+                <MiniLabel tone="sage">Back office</MiniLabel>
                 <h3 className="mt-2 font-serif text-2xl sm:text-3xl text-[var(--ink)] tracking-tight">
                   Business software
                 </h3>
@@ -170,11 +143,16 @@ function SoftwarePanel() {
             </div>
           </div>
 
-          <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px rounded-xl overflow-hidden border border-[var(--line)] bg-[var(--line)]">
+          <Stagger
+            as="ul"
+            stagger={0.05}
+            delay={0.3}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px rounded-xl overflow-hidden border border-[var(--line)] bg-[var(--line)]"
+          >
             {items.map((service) => {
               const Icon = iconMap[service.iconName] || LayoutDashboard;
               return (
-                <li key={service.id} className="group flex gap-3 p-3.5 sm:p-4 bg-[var(--surface)]">
+                <StaggerItem as="li" y={14} key={service.id} className="group flex gap-3 p-3.5 sm:p-4 bg-[var(--surface)]">
                   <span className="w-9 h-9 shrink-0 rounded-lg bg-[var(--sage)]/20 text-[#5E7356] flex items-center justify-center transition-colors group-hover:bg-[var(--sage)]/35">
                     <Icon className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />
                   </span>
@@ -182,10 +160,10 @@ function SoftwarePanel() {
                     <h4 className="text-sm font-semibold text-[var(--ink)] leading-snug">{service.title}</h4>
                     <p className="mt-1 text-xs text-[var(--muted)] leading-relaxed">{service.outcome}</p>
                   </div>
-                </li>
+                </StaggerItem>
               );
             })}
-            <li className="flex md:col-span-1 lg:col-span-full bg-[var(--bg)]">
+            <StaggerItem as="li" y={14} className="flex md:col-span-1 lg:col-span-full bg-[var(--bg)]">
               <a
                 href="#contact"
                 className="group flex-1 flex items-center gap-3 p-4 text-sm font-medium text-[var(--ink)] hover:text-[var(--terracotta)] transition-colors"
@@ -195,8 +173,8 @@ function SoftwarePanel() {
                 </span>
                 Need a module that isn&apos;t listed? Tell us.
               </a>
-            </li>
-          </ul>
+            </StaggerItem>
+          </Stagger>
         </div>
       </div>
     </div>
@@ -228,13 +206,7 @@ export function WhatIBuild() {
         intro="Websites bring customers to you. Business software runs what happens next. We build both, and connect them so nothing gets typed in twice."
       />
 
-      <div
-        className="relative rounded-[28px] border border-[var(--line)] bg-[#E3D9C8]/55 p-3 sm:p-6 lg:p-8"
-        style={{
-          backgroundImage: "radial-gradient(rgba(31,31,28,0.09) 1px, transparent 1px)",
-          backgroundSize: "18px 18px",
-        }}
-      >
+      <Workbench>
         <WebsitesPanel />
 
         {/* The link between the two layers: what a customer does on the site lands in the software. */}
@@ -262,7 +234,7 @@ export function WhatIBuild() {
             Talk it through with us
           </a>
         </p>
-      </div>
+      </Workbench>
     </section>
   );
 }

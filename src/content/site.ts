@@ -83,8 +83,14 @@ export interface FaqItem {
   answer: string;
 }
 
-const EMAIL = "omtechmodernsolutions@gmail.com";
-const WHATSAPP_DIGITS = "919876543210";
+// Public contact details come from the environment (see .env.example) so they never live in source.
+// Any value left blank hides the matching link across the site.
+const EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() ?? "";
+const WHATSAPP_DIGITS = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "").replace(/\D/g, "");
+const WHATSAPP_LINK = WHATSAPP_DIGITS
+  ? `https://wa.me/${WHATSAPP_DIGITS}?text=Hi%20Omtech%2C%20I%27d%20like%20to%20talk%20about%20a%20project`
+  : "";
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL?.trim() || "http://localhost:3000").replace(/\/$/, "");
 
 export const siteConfig = {
   brand: {
@@ -93,18 +99,15 @@ export const siteConfig = {
     monogram: "O",
     descriptor: "Websites & business software",
     tagline: "Websites and business software for companies that want to work better.",
-    // Placeholder until the domain is registered. Used for SEO metadata, sitemap and robots.txt.
-    siteUrl: "https://omtechmodernsolutions.example",
+    // Used for SEO metadata, sitemap and robots.txt.
+    siteUrl: SITE_URL,
     founder: "Abhishek Farande",
     founderRole: "Founder",
     availability: "Taking on new projects",
     responseTime: "We reply within one working day",
-    formspreeEndpoint: "https://formspree.io/f/[FORMSPREE_ENDPOINT]",
     email: EMAIL,
-    whatsappNumber: "+91 98765 43210",
-    whatsappLink: `https://wa.me/${WHATSAPP_DIGITS}?text=Hi%20Omtech%2C%20I%27d%20like%20to%20talk%20about%20a%20project`,
-    // Leave empty until a booking page exists; the contact section falls back to email.
-    calendlyLink: "",
+    whatsappLink: WHATSAPP_LINK,
+    calendlyLink: process.env.NEXT_PUBLIC_CALENDLY_URL?.trim() ?? "",
     location: "India · working with clients remotely",
   },
 
@@ -513,14 +516,14 @@ export const siteConfig = {
     },
     {
       id: "work-landing",
-      title: "Campaign page for an equipment supplier",
-      industry: "Industrial equipment",
+      title: "Campaign page for an interior design studio",
+      industry: "Interior design",
       problem:
-        "Paid ads send people to a slow company website that doesn't explain the offer, so most visitors leave before enquiring.",
+        "Instagram and Google ads send people to a slow portfolio website with no clear next step, so most visitors leave before asking for a quote.",
       solution:
-        "A single fast page for the campaign with a short enquiry form, a simple cost calculator and proper conversion tracking.",
-      outcome: "The ads land on a page made for them, and you can see exactly which campaigns bring in enquiries.",
-      modules: ["Campaign landing page", "Cost calculator", "Enquiry form", "Ad conversion tracking"],
+        "A single fast page for the campaign with the studio's best work, a short free-quote form and proper conversion tracking.",
+      outcome: "The ads land on a page made for them, and you can see exactly which campaigns bring in quote requests.",
+      modules: ["Campaign landing page", "Free-quote form", "WhatsApp alerts", "Ad conversion tracking"],
       previewType: "landing",
     },
     {
@@ -769,8 +772,8 @@ export const siteConfig = {
         title: "Contact",
         links: [
           { label: "Send an enquiry", href: "#contact" },
-          { label: "WhatsApp", href: `https://wa.me/${WHATSAPP_DIGITS}` },
-          { label: EMAIL, href: `mailto:${EMAIL}` },
+          ...(WHATSAPP_DIGITS ? [{ label: "WhatsApp", href: `https://wa.me/${WHATSAPP_DIGITS}` }] : []),
+          ...(EMAIL ? [{ label: "Email us", href: `mailto:${EMAIL}` }] : []),
         ],
       },
     ],

@@ -50,7 +50,7 @@ export default function Image() {
           </div>
         </div>
         <div style={{ display: "flex", fontSize: 24, color: "#C8643C" }}>
-          {siteConfig.brand.email}
+          {siteConfig.brand.descriptor}
         </div>
       </div>
     ),

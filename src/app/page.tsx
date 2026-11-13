@@ -15,6 +15,7 @@ import { About } from "@/components/About";
 import { FAQ } from "@/components/FAQ";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
+import { MarqueeBand } from "@/components/motion/Marquee";
 
 export default function Home() {
   const frames = getFrames();
@@ -24,7 +25,7 @@ export default function Home() {
       {/* 1. Navbar (stays above hero with z-50, transparent at top, solid on scroll) */}
       <Navbar />
 
-      <main id="main" className="flex-1 w-full overflow-x-clip">
+      <main id="main" className="page-curtain flex-1 w-full overflow-x-clip bg-[var(--bg)]">
         {/* 2. Hero: Scroll-scrubbed frame sequence if frames available, else static hero */}
         {frames.length > 0 ? (
           <ScrollHero frames={frames} />
@@ -51,6 +52,11 @@ export default function Home() {
         <div className="bg-[var(--bg)]">
           <Process />
         </div>
+
+        <MarqueeBand
+          items={["Websites", "Landing pages", "CRMs", "Stock & billing", "Booking systems", "Dashboards", "Automation"]}
+          secondary={["Fixed quotes", "Weekly demos", "You own the code", "Support included", "Built in India"]}
+        />
 
         {/* 7. Example projects (4 illustrative projects, no client metrics) */}
         <div className="bg-[var(--bg)]">
@@ -83,7 +89,7 @@ export default function Home() {
         </div>
 
         {/* 13. Contact (form, email, WhatsApp, call request) */}
-        <div className="bg-[var(--bg)]">
+        <div>
           <Contact />
         </div>
       </main>
