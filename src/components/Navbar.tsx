@@ -58,7 +58,7 @@ export function Navbar() {
       transition={{ duration: 0.45, ease: EASE }}
       className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,border-color,box-shadow] duration-300 ${
         isScrolled
-          ? "bg-[#EAE1D2]/85 backdrop-blur-md border-b border-[var(--line)] shadow-[0_2px_8px_rgba(31,31,28,0.04)]"
+          ? "bg-[#EAE1D2]/95 border-b border-[var(--line)] shadow-[0_2px_8px_rgba(31,31,28,0.04)]"
           : "bg-transparent border-b border-transparent"
       }`}
     >

@@ -25,15 +25,27 @@ export function MotionProvider({ children }: { children: React.ReactNode }) {
   // Feeds the pointer position to `.clay-card` so the CSS spotlight can follow it.
   useEffect(() => {
     if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
-    const onMove = (e: PointerEvent) => {
+    let last: PointerEvent | null = null;
+    let raf = 0;
+    const apply = () => {
+      raf = 0;
+      const e = last;
+      if (!e) return;
       const card = (e.target as Element | null)?.closest?.(".clay-card") as HTMLElement | null;
       if (!card) return;
       const r = card.getBoundingClientRect();
       card.style.setProperty("--mx", `${e.clientX - r.left}px`);
       card.style.setProperty("--my", `${e.clientY - r.top}px`);
     };
+    const onMove = (e: PointerEvent) => {
+      last = e;
+      if (!raf) raf = requestAnimationFrame(apply);
+    };
     window.addEventListener("pointermove", onMove, { passive: true });
-    return () => window.removeEventListener("pointermove", onMove);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, []);
 
   return <MotionConfig reducedMotion="user">{children}</MotionConfig>;

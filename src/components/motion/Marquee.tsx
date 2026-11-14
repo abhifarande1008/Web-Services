@@ -4,6 +4,7 @@ import React, { useRef } from "react";
 import {
   motion,
   useAnimationFrame,
+  useInView,
   useMotionValue,
   useReducedMotion,
   useScroll,
@@ -20,6 +21,8 @@ const wrap = (min: number, max: number, v: number) => {
 /** Endless text band whose speed and direction follow the page scroll. */
 function Track({ items, baseVelocity, className }: { items: string[]; baseVelocity: number; className: string }) {
   const reduce = useReducedMotion();
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { margin: "100px 0px" });
   const baseX = useMotionValue(0);
   const { scrollY } = useScroll();
   const velocity = useSpring(useVelocity(scrollY), { damping: 50, stiffness: 400 });
@@ -28,7 +31,7 @@ function Track({ items, baseVelocity, className }: { items: string[]; baseVeloci
   const x = useTransform(baseX, (v) => `${wrap(-25, 0, v)}%`);
 
   useAnimationFrame((_, delta) => {
-    if (reduce) return;
+    if (reduce || !inView) return;
     let moveBy = direction.current * baseVelocity * (delta / 1000);
     const f = factor.get();
     if (f < 0) direction.current = -1;
@@ -38,7 +41,7 @@ function Track({ items, baseVelocity, className }: { items: string[]; baseVeloci
   });
 
   return (
-    <div className={`overflow-hidden whitespace-nowrap ${className}`}>
+    <div ref={ref} className={`overflow-hidden whitespace-nowrap ${className}`}>
       <motion.div className="flex w-max" style={{ x }}>
         {[0, 1, 2, 3].map((copy) => (
           <span key={copy} className="flex shrink-0 items-center">

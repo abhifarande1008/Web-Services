@@ -272,6 +272,70 @@ html.lenis {
   }
 }
 
+/* Site loader. Everything progress-driven reads --p (0..1), set on the root by SiteLoader. */
+.site-loader {
+  box-shadow: 0 40px 80px -30px rgba(31, 31, 28, 0.45);
+  /* Failsafe so the page never stays covered if scripts fail to run. */
+  animation: loader-failsafe 0.5s ease 12s forwards;
+}
+@keyframes loader-failsafe {
+  to { opacity: 0; visibility: hidden; }
+}
+.loader-grid {
+  background-image: radial-gradient(rgba(31, 31, 28, 0.1) 1px, transparent 1px);
+  background-size: 1.125rem 1.125rem;
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 20%, transparent 72%);
+  mask-image: radial-gradient(ellipse at center, #000 20%, transparent 72%);
+}
+.loader-scan {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 35vh;
+  background: linear-gradient(to bottom, transparent, rgba(200, 100, 60, 0.06));
+  border-bottom: 1px solid rgba(200, 100, 60, 0.3);
+  transform: translateY(-35vh);
+  animation: loader-scan 3.4s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  pointer-events: none;
+}
+@keyframes loader-scan {
+  to { transform: translateY(100vh); }
+}
+.loader-spin,
+.loader-orbit {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  animation: loader-spin 36s linear infinite;
+}
+.loader-orbit {
+  animation-duration: 7s;
+  animation-direction: reverse;
+}
+@keyframes loader-spin {
+  to { transform: rotate(360deg); }
+}
+.loader-tick {
+  opacity: clamp(0, calc((var(--p) - var(--i)) * 60), 1);
+}
+.loader-arc {
+  stroke-dashoffset: calc(1 - var(--p));
+}
+.loader-chip {
+  --chip: clamp(0, calc((var(--p) - var(--t)) * 7), 1);
+  opacity: var(--chip);
+  transition: none;
+  transform: translateY(calc((1 - var(--chip)) * 14px)) scale(calc(0.94 + var(--chip) * 0.06));
+}
+.loader-breathe {
+  animation: loader-breathe 2.4s ease-in-out infinite alternate;
+}
+@keyframes loader-breathe {
+  to { transform: scale(1.05); }
+}
+.loader-bar {
+  transform: scaleX(var(--p));
+  transform-origin: left;
+}
+
 /* Reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
   * {

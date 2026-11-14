@@ -16,12 +16,15 @@ import { FAQ } from "@/components/FAQ";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
 import { MarqueeBand } from "@/components/motion/Marquee";
+import { SiteLoader } from "@/components/SiteLoader";
 
 export default function Home() {
   const frames = getFrames();
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)] flex flex-col overflow-x-clip">
+      <SiteLoader waitForHero={frames.length > 0} />
+
       {/* 1. Navbar (stays above hero with z-50, transparent at top, solid on scroll) */}
       <Navbar />
 
