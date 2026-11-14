@@ -27,7 +27,7 @@ export function Process() {
   const steps = siteConfig.process;
 
   return (
-    <section id="process" className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <section id="process" className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <SectionHeading
         eyebrow="How we work"
         title="Five steps, no surprises"
@@ -35,14 +35,54 @@ export function Process() {
       />
 
       <Workbench>
-        <div className="clay-card overflow-hidden">
+        {/* Phones: one vertical timeline instead of the chart and the deliverables grid. */}
+        <Stagger as="ol" stagger={0.1} className="md:hidden relative">
+          {steps.map((step, i) => {
+            const isSupport = i === steps.length - 1;
+            return (
+              <StaggerItem as="li" key={step.step} y={16} className="relative grid grid-cols-[2.25rem_1fr] gap-x-4 pb-8 last:pb-0">
+                {!isSupport && (
+                  <span className="absolute left-[1.125rem] top-10 bottom-1 w-px bg-[var(--line)]" aria-hidden="true" />
+                )}
+                <span
+                  className={`w-9 h-9 rounded-full flex items-center justify-center font-mono text-xs ${
+                    isSupport ? "bg-[var(--sage)]/30 text-[#5E7356]" : "bg-[var(--ink)] text-[var(--surface)]"
+                  }`}
+                  aria-hidden="true"
+                >
+                  {step.step}
+                </span>
+                <div className="min-w-0 pt-1">
+                  <div className="flex items-baseline justify-between gap-3">
+                    <h3 className="font-serif text-xl text-[var(--ink)]">{step.title}</h3>
+                    <span className="shrink-0 text-xs font-medium text-[var(--terracotta)]">{step.duration}</span>
+                  </div>
+                  <p className="mt-1.5 text-sm text-[var(--muted)] leading-relaxed">{step.description}</p>
+                  <ul className="mt-3 flex flex-col gap-1.5">
+                    {step.deliverables.map((d) => (
+                      <li key={d} className="flex items-start gap-2 text-sm text-[var(--ink)] leading-snug">
+                        <Check className="w-4 h-4 mt-px text-[#5E7356] shrink-0" strokeWidth={2.25} aria-hidden="true" />
+                        {d}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </StaggerItem>
+            );
+          })}
+        </Stagger>
+        <p className="md:hidden mt-8 text-sm text-[var(--muted)]">
+          Landing pages and websites move faster: about 1 to 3 weeks from first call to launch.
+        </p>
+
+        <div className="hidden md:block clay-card overflow-hidden">
           <WindowBar address="project-plan" />
 
           {/* Gantt chart */}
           <div className="px-4 sm:px-6 pt-5 pb-6">
             <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
               <MiniLabel tone="terracotta">Typical custom software project</MiniLabel>
-              <div className="flex items-center gap-4 text-[11px] text-[var(--muted)]">
+              <div className="flex items-center gap-4 text-[0.6875rem] text-[var(--muted)]">
                 <span className="inline-flex items-center gap-1.5">
                   <span className="w-3 h-2 rounded-sm bg-[var(--terracotta)]" aria-hidden="true" /> Work
                 </span>
@@ -60,7 +100,7 @@ export function Process() {
             {/* Week scale */}
             <div className="hidden md:grid grid-cols-[13rem_1fr] gap-4 mb-1" aria-hidden="true">
               <span />
-              <div className="grid font-mono text-[10px] text-[var(--muted)]" style={{ gridTemplateColumns: `repeat(${WEEKS}, 1fr)` }}>
+              <div className="grid font-mono text-[0.625rem] text-[var(--muted)]" style={{ gridTemplateColumns: `repeat(${WEEKS}, 1fr)` }}>
                 {Array.from({ length: WEEKS }, (_, i) => (
                   <span key={i} className="pl-1">W{i + 1}</span>
                 ))}
@@ -120,7 +160,7 @@ export function Process() {
                   className="bg-[var(--surface)] p-4 flex flex-col sm:last:col-span-2 lg:last:col-span-1 transition-colors hover:bg-[#FDFBF8]"
                 >
                   <div className="flex items-baseline gap-2">
-                    <span className="font-mono text-[11px] text-[var(--terracotta)]">{step.step}</span>
+                    <span className="font-mono text-[0.6875rem] text-[var(--terracotta)]">{step.step}</span>
                     <h3 className="font-serif text-base text-[var(--ink)]">{step.title}</h3>
                   </div>
                   <p className="mt-2 text-xs text-[var(--muted)] leading-relaxed">{step.description}</p>

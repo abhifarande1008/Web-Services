@@ -12,7 +12,7 @@ export function About() {
   const { brand, about } = siteConfig;
 
   return (
-    <section id="about" className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <section id="about" className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-10 lg:gap-16 items-center">
         <div>
           <Reveal y={12}>
@@ -48,10 +48,29 @@ export function About() {
               </StaggerItem>
             ))}
           </Stagger>
+
+          <Reveal y={16} delay={0.2} className="md:hidden mt-8 flex items-center gap-4 rounded-2xl bg-[var(--ink)] text-[var(--surface)] p-4">
+            <span className="w-12 h-12 shrink-0 rounded-xl bg-[var(--terracotta)] flex items-center justify-center font-serif text-xl" aria-hidden="true">
+              {brand.monogram}
+            </span>
+            <div className="min-w-0">
+              <p className="font-serif text-lg leading-tight">{brand.founder}</p>
+              <p className="text-xs text-[var(--surface)]/60">{brand.founderRole}</p>
+              {brand.email && (
+                <a
+                  href={`mailto:${brand.email}`}
+                  className="mt-1.5 inline-flex items-center gap-1.5 text-xs text-[var(--surface)]/90 break-all"
+                >
+                  <Mail className="w-3.5 h-3.5 shrink-0 text-[#E8A27F]" strokeWidth={1.75} aria-hidden="true" />
+                  {brand.email}
+                </a>
+              )}
+            </div>
+          </Reveal>
         </div>
 
-        <Workbench className="min-h-[360px] sm:min-h-[420px] flex items-center justify-center">
-          <Tilt max={8} className="relative w-[84%] sm:w-full max-w-[400px] my-10 sm:my-12">
+        <Workbench className="hidden min-h-[26.25rem] md:flex items-center justify-center">
+          <Tilt max={8} className="relative w-[84%] sm:w-full max-w-[25rem] my-10 sm:my-12">
             {/* Back of the card */}
             <motion.div
               className="absolute inset-0 rounded-2xl bg-[var(--surface)] border border-[var(--line)] shadow-[0_16px_32px_-18px_rgba(31,31,28,0.35)] flex items-center justify-center"
@@ -62,7 +81,7 @@ export function About() {
               transition={{ type: "spring", stiffness: 90, damping: 14, delay: 0.6 }}
             >
               <span className="font-serif text-[5.5rem] leading-none text-[var(--terracotta)]/90">{brand.monogram}</span>
-              <span className="absolute bottom-4 right-5 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--muted)]">
+              <span className="absolute bottom-4 right-5 font-mono text-[0.625rem] uppercase tracking-[0.18em] text-[var(--muted)]">
                 {brand.descriptor}
               </span>
             </motion.div>
@@ -85,7 +104,7 @@ export function About() {
               <div className="mt-auto">
                 <p className="font-serif text-2xl sm:text-[1.75rem] leading-tight">{brand.founder}</p>
                 <p className="text-xs text-[var(--surface)]/60 mt-0.5">{brand.founderRole}</p>
-                <ul className="mt-4 pt-3 border-t border-white/10 flex flex-col gap-1.5 text-[11.5px] sm:text-xs">
+                <ul className="mt-4 pt-3 border-t border-white/10 flex flex-col gap-1.5 text-[0.71875rem] sm:text-xs">
                   {brand.email && (
                     <li>
                       <a

@@ -52,9 +52,9 @@ const flows = [
 function WebsitesPanel() {
   const items = siteConfig.services.web;
   return (
-    <div className="clay-card overflow-hidden flex flex-col">
+    <div className="clay-card flat-mobile overflow-hidden flex flex-col">
       <WindowBar address="yourbusiness.in" />
-      <div className="px-5 sm:px-8 pt-6 pb-4 lg:flex lg:items-end lg:justify-between lg:gap-10">
+      <div className="pb-4 md:px-8 md:pt-6 lg:flex lg:items-end lg:justify-between lg:gap-10">
         <div>
           <MiniLabel tone="terracotta">Front of house</MiniLabel>
           <h3 className="mt-2 font-serif text-2xl sm:text-3xl text-[var(--ink)] tracking-tight">Websites</h3>
@@ -63,7 +63,7 @@ function WebsitesPanel() {
           What your customers see: pages that explain your business and get people to contact you.
         </p>
       </div>
-      <Stagger as="ol" stagger={0.06} delay={0.3} className="px-5 sm:px-8 pb-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 sm:gap-x-8">
+      <Stagger as="ol" stagger={0.06} delay={0.3} className="md:px-8 md:pb-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-x-8">
         {items.map((service, i) => {
           const Icon = iconMap[service.iconName] || Globe;
           return (
@@ -96,11 +96,11 @@ function WebsitesPanel() {
 function SoftwarePanel() {
   const items = siteConfig.services.app;
   return (
-    <div className="clay-card overflow-hidden flex flex-col">
+    <div className="clay-card flat-mobile overflow-hidden flex flex-col">
       <WindowBar address="app.yourbusiness.in" />
       <div className="flex flex-1 min-h-0">
         {/* Module sidebar, echoing the dashboard the hero animation ends on. */}
-        <div className="hidden sm:flex flex-col items-center gap-1.5 w-14 shrink-0 py-4 bg-[var(--ink)]" aria-hidden="true">
+        <div className="hidden md:flex flex-col items-center gap-1.5 w-14 shrink-0 py-4 bg-[var(--ink)]" aria-hidden="true">
           <span className="w-8 h-8 mb-2 rounded-lg bg-[var(--surface)] text-[var(--ink)] font-serif font-semibold text-sm flex items-center justify-center">
             {siteConfig.brand.monogram}
           </span>
@@ -119,8 +119,8 @@ function SoftwarePanel() {
           })}
         </div>
 
-        <div className="flex-1 min-w-0 p-5 sm:p-6">
-          <div className="flex items-end justify-between gap-6 mb-5">
+        <div className="flex-1 min-w-0 md:p-6">
+          <div className="flex items-end justify-between gap-6 mb-4 md:mb-5">
             <div className="lg:flex lg:items-end lg:gap-10">
               <div className="shrink-0">
                 <MiniLabel tone="sage">Back office</MiniLabel>
@@ -147,12 +147,12 @@ function SoftwarePanel() {
             as="ul"
             stagger={0.05}
             delay={0.3}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px rounded-xl overflow-hidden border border-[var(--line)] bg-[var(--line)]"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-px md:rounded-xl md:overflow-hidden md:border md:border-[var(--line)] md:bg-[var(--line)]"
           >
             {items.map((service) => {
               const Icon = iconMap[service.iconName] || LayoutDashboard;
               return (
-                <StaggerItem as="li" y={14} key={service.id} className="group flex gap-3 p-3.5 sm:p-4 bg-[var(--surface)]">
+                <StaggerItem as="li" y={14} key={service.id} className="group flex gap-3 py-3.5 border-t border-[var(--line)] md:border-t-0 md:p-4 md:bg-[var(--surface)]">
                   <span className="w-9 h-9 shrink-0 rounded-lg bg-[var(--sage)]/20 text-[#5E7356] flex items-center justify-center transition-colors group-hover:bg-[var(--sage)]/35">
                     <Icon className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />
                   </span>
@@ -163,10 +163,10 @@ function SoftwarePanel() {
                 </StaggerItem>
               );
             })}
-            <StaggerItem as="li" y={14} className="flex md:col-span-1 lg:col-span-full bg-[var(--bg)]">
+            <StaggerItem as="li" y={14} className="flex md:col-span-1 lg:col-span-full border-t border-[var(--line)] md:border-t-0 md:bg-[var(--bg)]">
               <a
                 href="#contact"
-                className="group flex-1 flex items-center gap-3 p-4 text-sm font-medium text-[var(--ink)] hover:text-[var(--terracotta)] transition-colors"
+                className="group flex-1 flex items-center gap-3 py-4 md:p-4 text-sm font-medium text-[var(--ink)] hover:text-[var(--terracotta)] transition-colors"
               >
                 <span className="w-9 h-9 shrink-0 rounded-lg border border-dashed border-[var(--muted)]/50 flex items-center justify-center">
                   <Plus className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />
@@ -199,7 +199,7 @@ function FlowPill({ from, to }: { from: string; to: string }) {
 
 export function WhatIBuild() {
   return (
-    <section id="services" className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <section id="services" className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <SectionHeading
         eyebrow="Services"
         title="Two sides of your business, built to work together"
@@ -215,7 +215,7 @@ export function WhatIBuild() {
             className="absolute left-1/2 top-0 bottom-0 -translate-x-1/2 border-l border-dashed border-[var(--muted)]/45"
             aria-hidden="true"
           />
-          <p className="relative inline-flex items-center gap-1.5 mb-3 px-3 py-1 rounded-full bg-[var(--ink)] text-[var(--surface)] text-[10px] font-semibold uppercase tracking-[0.16em]">
+          <p className="relative inline-flex items-center gap-1.5 mb-3 px-3 py-1 rounded-full bg-[var(--ink)] text-[var(--surface)] text-[0.625rem] font-semibold uppercase tracking-[0.16em]">
             <ArrowDown className="w-3 h-3" strokeWidth={2} aria-hidden="true" />
             Connected
           </p>

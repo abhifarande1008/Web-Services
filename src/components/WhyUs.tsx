@@ -13,7 +13,7 @@ export function WhyUs() {
   const { brand, whyUs } = siteConfig;
 
   return (
-    <section id="why-us" className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <section id="why-us" className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <SectionHeading
         eyebrow={`Why ${brand.shortName}`}
         title="Why businesses work with us"
@@ -26,11 +26,11 @@ export function WhyUs() {
           <span className="absolute inset-x-4 -bottom-2 h-2 rounded-b-2xl bg-[#F3EDE3] border border-t-0 border-[var(--line)] -z-10" aria-hidden="true" />
 
           <header className="relative flex flex-wrap items-baseline justify-between gap-3 pb-4">
-            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]">
+            <p className="font-mono text-[0.6875rem] uppercase tracking-[0.18em] text-[var(--ink)]">
               {brand.shortName} · Working agreement
             </p>
-            <p className="font-mono text-[11px] text-[var(--muted)]">Applies to every project</p>
-            <GrowX className="absolute left-0 right-0 bottom-0 h-[3px] border-y border-[var(--ink)]/70" duration={1.4} delay={0.4} aria-hidden="true" />
+            <p className="font-mono text-[0.6875rem] text-[var(--muted)]">Applies to every project</p>
+            <GrowX className="absolute left-0 right-0 bottom-0 h-[0.1875rem] border-y border-[var(--ink)]/70" duration={1.4} delay={0.4} aria-hidden="true" />
           </header>
 
           <h3 className="mt-8 font-serif text-2xl sm:text-3xl text-[var(--ink)] tracking-tight max-w-xl">
@@ -69,7 +69,7 @@ export function WhyUs() {
               </p>
             </div>
             <motion.span
-              className="self-start sm:self-auto w-20 h-20 rounded-full border-2 border-[var(--terracotta)]/60 text-[var(--terracotta)] flex flex-col items-center justify-center font-mono text-[9px] uppercase tracking-[0.14em] leading-tight text-center"
+              className="self-start sm:self-auto w-20 h-20 rounded-full border-2 border-[var(--terracotta)]/60 text-[var(--terracotta)] flex flex-col items-center justify-center font-mono text-[0.5625rem] uppercase tracking-[0.14em] leading-tight text-center"
               aria-hidden="true"
               initial={{ opacity: 0, scale: 1.8, rotate: -40 }}
               whileInView={{ opacity: 1, scale: 1, rotate: -12 }}

@@ -62,7 +62,7 @@ export function SelectedWork() {
   ];
 
   return (
-    <section id="work" className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <section id="work" className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <SectionHeading
         eyebrow="Example projects"
         title="The kind of work we do"
@@ -72,7 +72,7 @@ export function SelectedWork() {
       <Workbench>
         <div className="clay-card overflow-hidden">
           {/* Browser tabs */}
-          <div className="flex items-end gap-1 px-3 pt-2.5 bg-[var(--bg)]/60 border-b border-[var(--line)] overflow-x-auto">
+          <div className="flex items-end gap-1 px-3 pt-2.5 bg-[var(--bg)]/60 border-b border-[var(--line)] overflow-x-auto no-scrollbar">
             <div className="hidden sm:flex gap-1.5 pl-1 pr-3 pb-3 self-center" aria-hidden="true">
               <span className="w-2.5 h-2.5 rounded-full bg-[var(--terracotta)]/70" />
               <span className="w-2.5 h-2.5 rounded-full bg-[var(--sage)]" />
@@ -93,7 +93,10 @@ export function SelectedWork() {
                     aria-selected={isActive}
                     aria-controls="work-panel"
                     tabIndex={isActive ? 0 : -1}
-                    onClick={() => setActiveIndex(i)}
+                    onClick={(e) => {
+                      setActiveIndex(i);
+                      e.currentTarget.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+                    }}
                     onKeyDown={(e) => onKeyDown(e, i)}
                     className={`relative -mb-px flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-t-lg text-xs sm:text-sm whitespace-nowrap border transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--terracotta)] ${
                       isActive
@@ -121,7 +124,7 @@ export function SelectedWork() {
               >
                 {/* Screen */}
                 <div className="p-4 sm:p-6 lg:border-r border-[var(--line)] bg-[var(--bg)]/30">
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 mb-3 rounded-md bg-[var(--surface)] border border-[var(--line)] text-[11px] text-[var(--muted)]" aria-hidden="true">
+                  <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 mb-3 rounded-md bg-[var(--surface)] border border-[var(--line)] text-[0.6875rem] text-[var(--muted)]" aria-hidden="true">
                     <Lock className="w-3 h-3" strokeWidth={1.75} />
                     <span className="truncate">{meta.address}</span>
                   </div>
@@ -141,21 +144,21 @@ export function SelectedWork() {
                       />
                     </motion.div>
                   </div>
-                  <p className="mt-2 text-[10px] text-[var(--muted)]">Illustration of the kind of screen we&apos;d build.</p>
+                  <p className="mt-2 text-[0.625rem] text-[var(--muted)]">Illustration of the kind of screen we&apos;d build.</p>
                 </div>
 
                 {/* Story */}
                 <div className="p-5 sm:p-8 flex flex-col">
                   <div className="flex flex-wrap items-center gap-2">
                     <MiniLabel tone="terracotta">{active.industry}</MiniLabel>
-                    <span className="ml-auto text-[11px] px-2 py-0.5 rounded-md bg-[var(--bg)] border border-[var(--line)] text-[var(--muted)]">
+                    <span className="ml-auto text-[0.6875rem] px-2 py-0.5 rounded-md bg-[var(--bg)] border border-[var(--line)] text-[var(--muted)]">
                       Example project
                     </span>
                   </div>
                   <h3 className="mt-3 font-serif text-2xl sm:text-3xl text-[var(--ink)] tracking-tight leading-tight">{active.title}</h3>
 
                   <ol className="mt-6 relative flex flex-col gap-5">
-                    <span className="absolute left-[5px] top-2 bottom-2 w-px bg-[var(--line)]" aria-hidden="true" />
+                    <span className="absolute left-[0.3125rem] top-2 bottom-2 w-px bg-[var(--line)]" aria-hidden="true" />
                     {story.map((s, i) => (
                       <motion.li
                         key={s.label}
@@ -164,8 +167,8 @@ export function SelectedWork() {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.6, ease: EASE, delay: 0.15 + i * 0.1 }}
                       >
-                        <span className={`absolute left-0 top-1.5 w-[11px] h-[11px] rounded-full ring-4 ring-[var(--surface)] ${s.tone}`} aria-hidden="true" />
-                        <p className="font-sans text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">{s.label}</p>
+                        <span className={`absolute left-0 top-1.5 w-[0.6875rem] h-[0.6875rem] rounded-full ring-4 ring-[var(--surface)] ${s.tone}`} aria-hidden="true" />
+                        <p className="font-sans text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">{s.label}</p>
                         <p className={`mt-1 text-sm leading-relaxed ${s.label === "After" ? "text-[var(--ink)] font-medium" : "text-[var(--muted)]"}`}>{s.text}</p>
                       </motion.li>
                     ))}

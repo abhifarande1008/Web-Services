@@ -17,15 +17,17 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 
+// Phones get stacked labels and boxed inputs; from md up the form reads like an email draft.
 const rowClass =
-  "grid grid-cols-[5.5rem_1fr] sm:grid-cols-[7rem_1fr] items-center border-b border-[var(--line)] px-4 sm:px-6 transition-shadow focus-within:shadow-[inset_3px_0_0_var(--terracotta)] focus-within:bg-[var(--bg)]/30";
-const labelClass = "text-xs sm:text-[13px] text-[var(--muted)] py-3.5";
+  "grid grid-cols-1 md:grid-cols-[7rem_1fr] md:items-center pt-4 md:pt-0 md:px-6 md:border-b md:border-[var(--line)] md:transition-shadow md:focus-within:shadow-[inset_3px_0_0_var(--terracotta)] md:focus-within:bg-[var(--bg)]/30";
+const labelClass = "text-xs font-medium md:font-normal md:text-[0.8125rem] text-[var(--muted)] pb-1.5 md:py-3.5";
+// 16px text on phones stops iOS from zooming in when a field is focused.
 const fieldClass =
-  "w-full min-w-0 bg-transparent py-3.5 text-sm text-[var(--ink)] placeholder:text-[var(--muted)]/60 focus:outline-none";
+  "w-full min-w-0 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-3.5 py-3 text-base md:text-sm text-[var(--ink)] placeholder:text-[var(--muted)]/60 focus:outline-none focus:border-[var(--terracotta)] md:rounded-none md:border-0 md:bg-transparent md:px-0 md:py-3.5";
 
 const nextSteps = [
   { title: "We reply within one working day", text: "With a few questions, or a time for a call." },
-  { title: "A free 20-minute call", text: "You walk us through how things work today." },
+  { title: "A free 30-minute call", text: "You walk us through how things work today." },
   { title: "A fixed quote in writing", text: "Scope, timeline and price, before anything starts." },
 ];
 
@@ -116,7 +118,7 @@ export function Contact() {
     },
     brand.calendlyLink && {
       icon: Calendar,
-      title: "Free 20-minute call",
+      title: "Free 30-minute call",
       text: "Pick a time that suits you.",
       value: "Choose a time",
       href: brand.calendlyLink,
@@ -125,7 +127,7 @@ export function Contact() {
   ].filter((c): c is Exclude<typeof c, "" | false | undefined> => Boolean(c));
 
   return (
-    <section id="contact" className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <section id="contact" className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <SectionHeading
         eyebrow="Contact"
         title={siteConfig.contact.headline}
@@ -133,9 +135,9 @@ export function Contact() {
       />
 
       <Workbench>
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 md:gap-6 lg:gap-8 items-start">
           {/* Compose window */}
-          <div className="lg:col-span-7 clay-card overflow-hidden">
+          <div className="lg:col-span-7 clay-card flat-mobile overflow-hidden">
             <WindowBar>
               <div className="flex-1 flex items-center justify-between min-w-0">
                 <span className="text-sm font-medium text-[var(--ink)]">New enquiry</span>
@@ -168,7 +170,7 @@ export function Contact() {
               </div>
             ) : (
               <form onSubmit={handleSubmit}>
-                <div className="absolute -left-[9999px] w-px h-px overflow-hidden" aria-hidden="true">
+                <div className="absolute -left-[624.9375rem] w-px h-px overflow-hidden" aria-hidden="true">
                   <label htmlFor="company">Company</label>
                   <input
                     id="company"
@@ -181,17 +183,17 @@ export function Contact() {
                   />
                 </div>
                 {status === "error" && (
-                  <div className="mx-4 sm:mx-6 mt-4 p-4 rounded-xl bg-[var(--terracotta)]/10 border border-[var(--terracotta)]/30 flex items-start gap-3 text-xs text-[var(--terracotta)]">
+                  <div className="md:mx-6 mt-4 p-4 rounded-xl bg-[var(--terracotta)]/10 border border-[var(--terracotta)]/30 flex items-start gap-3 text-xs text-[var(--terracotta)]">
                     <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" strokeWidth={1.5} />
                     <span>{errorMessage}</span>
                   </div>
                 )}
 
-                <div className={rowClass}>
+                <div className={`${rowClass} max-md:hidden`}>
                   <span className={labelClass}>To</span>
                   <span className="py-3.5 min-w-0">
                     <span className="inline-flex max-w-full items-center gap-1.5 rounded-full bg-[var(--bg)] border border-[var(--line)] pl-1 pr-2.5 py-0.5 text-xs text-[var(--ink)]">
-                      <span className="w-5 h-5 shrink-0 rounded-full bg-[var(--ink)] text-[var(--surface)] flex items-center justify-center font-serif text-[11px]" aria-hidden="true">
+                      <span className="w-5 h-5 shrink-0 rounded-full bg-[var(--ink)] text-[var(--surface)] flex items-center justify-center font-serif text-[0.6875rem]" aria-hidden="true">
                         {brand.monogram}
                       </span>
                       <span className="truncate">{brand.name}</span>
@@ -199,7 +201,7 @@ export function Contact() {
                   </span>
                 </div>
 
-                <div className={rowClass}>
+                <div className={`${rowClass} max-md:hidden`}>
                   <span className={labelClass}>Subject</span>
                   <span className="py-3.5 text-sm font-medium text-[var(--ink)] truncate" aria-live="polite">
                     Project enquiry: {formData.service}
@@ -256,8 +258,8 @@ export function Contact() {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2">
-                  <div className={`${rowClass} sm:border-r`}>
+                <div className="grid grid-cols-1 md:grid-cols-2">
+                  <div className={`${rowClass} md:border-r`}>
                     <label htmlFor="service" className={labelClass}>
                       Need *
                     </label>
@@ -295,8 +297,8 @@ export function Contact() {
                   </div>
                 </div>
 
-                <div className="px-4 sm:px-6 pt-4 transition-shadow focus-within:shadow-[inset_3px_0_0_var(--terracotta)]">
-                  <label htmlFor="message" className="sr-only">
+                <div className="md:px-6 pt-4 md:transition-shadow md:focus-within:shadow-[inset_3px_0_0_var(--terracotta)]">
+                  <label htmlFor="message" className="block pb-1.5 text-xs font-medium text-[var(--muted)] md:sr-only">
                     Tell us about the project *
                   </label>
                   <textarea
@@ -307,17 +309,17 @@ export function Contact() {
                     value={formData.message}
                     onChange={handleChange}
                     placeholder="What does your business do, and what would you like to build or fix? A few lines is enough."
-                    className="w-full bg-transparent text-sm sm:text-[15px] leading-relaxed text-[var(--ink)] placeholder:text-[var(--muted)]/60 focus:outline-none resize-y"
+                    className="w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-3.5 py-3 text-base md:text-[0.9375rem] leading-relaxed text-[var(--ink)] placeholder:text-[var(--muted)]/60 focus:outline-none focus:border-[var(--terracotta)] md:rounded-none md:border-0 md:bg-transparent md:p-0 resize-y"
                   />
                 </div>
 
-                <div className="flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-3 px-4 sm:px-6 py-4 border-t border-[var(--line)] bg-[var(--bg)]/40">
-                  <p className="text-xs text-[var(--muted)]">{brand.responseTime}.</p>
-                  <Magnetic strength={0.2} className="w-full sm:w-auto">
+                <div className="flex flex-col-reverse md:flex-row md:items-center justify-between gap-3 pt-5 md:px-6 md:py-4 md:border-t md:border-[var(--line)] md:bg-[var(--bg)]/40">
+                  <p className="text-xs text-[var(--muted)] text-center md:text-left">{brand.responseTime}.</p>
+                  <Magnetic strength={0.2} className="w-full md:w-auto">
                   <button
                     type="submit"
                     disabled={status === "submitting"}
-                    className="btn-primary w-full sm:w-auto py-3 px-6 text-sm font-medium justify-center cursor-pointer disabled:opacity-50"
+                    className="btn-primary w-full md:w-auto py-3.5 md:py-3 px-6 text-sm font-medium justify-center cursor-pointer disabled:opacity-50"
                   >
                     {status === "submitting" ? (
                       <span>Sending…</span>
@@ -335,19 +337,19 @@ export function Contact() {
           </div>
 
           {/* What happens next + other channels */}
-          <div className="lg:col-span-5 flex flex-col gap-4 sm:gap-6">
-            <div className="clay-card p-5 sm:p-6">
+          <div className="lg:col-span-5 flex flex-col gap-10 md:gap-6">
+            <div className="clay-card flat-mobile md:p-6">
               <MiniLabel tone="terracotta">What happens next</MiniLabel>
               <Stagger as="ol" stagger={0.2} delay={0.3} className="mt-5 relative">
                 <motion.span
-                  className="absolute left-[11px] top-3 bottom-3 w-px bg-[var(--line)] origin-top"
+                  className="absolute left-[0.6875rem] top-3 bottom-3 w-px bg-[var(--line)] origin-top"
                   aria-hidden="true"
                   variants={{ hidden: { scaleY: 0 }, show: { scaleY: 1, transition: { duration: 1.2, ease: EASE } } }}
                 />
                 {nextSteps.map((step, i) => (
                   <StaggerItem as="li" key={step.title} y={0} x={-12} className="relative grid grid-cols-[1.5rem_1fr] gap-3 pb-5 last:pb-0">
                     <span
-                      className={`relative z-10 w-6 h-6 rounded-full flex items-center justify-center font-mono text-[10px] ${
+                      className={`relative z-10 w-6 h-6 rounded-full flex items-center justify-center font-mono text-[0.625rem] ${
                         i === 0
                           ? "bg-[var(--terracotta)] text-[var(--surface)]"
                           : "bg-[var(--surface)] border border-[var(--line)] text-[var(--muted)]"
@@ -384,7 +386,7 @@ export function Contact() {
                       <span className="min-w-0">
                         <span className="block text-sm font-semibold text-[var(--ink)]">{title}</span>
                         <span className="block text-xs text-[var(--muted)] truncate">{text}</span>
-                        <span className="block mt-0.5 text-[13px] text-[var(--ink)] group-hover:text-[var(--terracotta)] transition-colors break-all">
+                        <span className="block mt-0.5 text-[0.8125rem] text-[var(--ink)] group-hover:text-[var(--terracotta)] transition-colors break-all">
                           {value}
                         </span>
                       </span>

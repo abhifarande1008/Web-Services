@@ -21,7 +21,7 @@ export function Packages() {
   };
 
   return (
-    <section id="pricing" className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <section id="pricing" className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <SectionHeading
         eyebrow="Pricing"
         title="Ways to work with us"
@@ -29,16 +29,25 @@ export function Packages() {
       />
 
       <Workbench>
-        <div className="clay-card overflow-hidden">
-          <Stagger stagger={0.1} delay={0.25} className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-px bg-[var(--line)]">
+        <p className="md:hidden mb-3 text-xs text-[var(--muted)]">
+          Swipe to compare {siteConfig.packages.length} options &rarr;
+        </p>
+        <div className="clay-card flat-mobile md:overflow-hidden">
+          <Stagger
+            stagger={0.1}
+            delay={0.25}
+            className="no-scrollbar -mx-4 px-4 sm:-mx-6 sm:px-6 flex gap-3 overflow-x-auto snap-x snap-mandatory scroll-px-4 sm:scroll-px-6 pb-2 md:mx-0 md:px-0 md:pb-0 md:grid md:grid-cols-2 xl:grid-cols-4 md:gap-px md:bg-[var(--line)] md:overflow-visible"
+          >
             {siteConfig.packages.map((pkg, i) => {
               const dark = pkg.isPopular;
               return (
                 <StaggerItem
                   key={pkg.id}
                   y={40}
-                  className={`group/plan relative flex flex-col p-6 sm:p-7 ${
-                    dark ? "bg-[var(--ink)] text-[var(--surface)]" : "bg-[var(--surface)] text-[var(--ink)]"
+                  className={`group/plan relative shrink-0 w-[84%] sm:w-[60%] snap-start rounded-2xl border md:w-auto md:rounded-none md:border-0 flex flex-col p-6 sm:p-7 ${
+                    dark
+                      ? "bg-[var(--ink)] text-[var(--surface)] border-[var(--ink)]"
+                      : "bg-[var(--surface)] text-[var(--ink)] border-[var(--line)]"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">
@@ -46,12 +55,12 @@ export function Packages() {
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     {dark ? (
-                      <span className="relative overflow-hidden px-2.5 py-0.5 rounded-full bg-[var(--terracotta)] text-[var(--surface)] text-[11px] font-medium">
+                      <span className="relative overflow-hidden px-2.5 py-0.5 rounded-full bg-[var(--terracotta)] text-[var(--surface)] text-[0.6875rem] font-medium">
                         Most asked about
                         <span className="badge-shine" aria-hidden="true" />
                       </span>
                     ) : (
-                      <span className="h-[22px]" aria-hidden="true" />
+                      <span className="h-[1.375rem]" aria-hidden="true" />
                     )}
                   </div>
 
@@ -69,7 +78,7 @@ export function Packages() {
                   >
                     {[["Timeline", pkg.timeline], ...(pkg.price ? [["Price", pkg.price]] : [])].map(([k, v]) => (
                       <div key={k} className={`px-3 py-2.5 ${dark ? "bg-[#2A2A26]" : "bg-[var(--bg)]/50"}`}>
-                        <dt className={`font-sans text-[10px] font-semibold uppercase tracking-[0.14em] ${dark ? "text-[var(--surface)]/55" : "text-[var(--muted)]"}`}>
+                        <dt className={`font-sans text-[0.625rem] font-semibold uppercase tracking-[0.14em] ${dark ? "text-[var(--surface)]/55" : "text-[var(--muted)]"}`}>
                           {k}
                         </dt>
                         <dd className="mt-0.5 text-sm font-medium">{v}</dd>
@@ -106,9 +115,9 @@ export function Packages() {
           </Stagger>
         </div>
 
-        <Stagger as="ul" stagger={0.1} className="mt-4 sm:mt-6 grid grid-cols-1 md:grid-cols-3 gap-3">
+        <Stagger as="ul" stagger={0.1} className="mt-8 md:mt-6 grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-3">
           {terms.map(({ icon: Icon, title, text }) => (
-            <StaggerItem as="li" key={title} y={16} className="flex items-start gap-3 rounded-xl bg-[var(--surface)]/80 border border-[var(--line)] p-4">
+            <StaggerItem as="li" key={title} y={16} className="flex items-start gap-3 md:rounded-xl md:bg-[var(--surface)]/80 md:border md:border-[var(--line)] md:p-4">
               <span className="w-9 h-9 shrink-0 rounded-lg bg-[var(--terracotta)]/10 text-[var(--terracotta)] flex items-center justify-center">
                 <Icon className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />
               </span>

@@ -389,7 +389,7 @@ export function ScrollHero({ frames }: ScrollHeroProps) {
       {/* 2px Terracotta Loading Progress Bar */}
       {loadingProgress < 100 && (
         <div
-          className="fixed top-0 left-0 h-[2px] bg-[var(--terracotta)] z-50 transition-all duration-150 pointer-events-none"
+          className="fixed top-0 left-0 h-[0.125rem] bg-[var(--terracotta)] z-50 transition-all duration-150 pointer-events-none"
           style={{ width: `${loadingProgress}%` }}
           aria-hidden="true"
         />
@@ -414,7 +414,7 @@ export function ScrollHero({ frames }: ScrollHeroProps) {
 
         {/* 120px Bottom Gradient for seamless section blend */}
         <div
-          className="absolute bottom-0 left-0 right-0 h-[120px] pointer-events-none z-15"
+          className="absolute bottom-0 left-0 right-0 h-[7.5rem] pointer-events-none z-15"
           style={{
             background: `linear-gradient(to bottom, rgba(234, 225, 210, 0) 0%, ${BG_HEX} 100%)`,
           }}

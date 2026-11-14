@@ -23,7 +23,7 @@ function TimelineBar({ timeline }: { timeline: string }) {
   return (
     <div>
       <div className="flex items-baseline justify-between mb-3">
-        <h4 className="font-sans text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
+        <h4 className="font-sans text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
           Typical timeline
         </h4>
         <span className="text-sm font-semibold text-[var(--ink)]">{timeline}</span>
@@ -42,7 +42,7 @@ function TimelineBar({ timeline }: { timeline: string }) {
           />
         )}
       </div>
-      <div className="mt-2 grid text-[10px] text-[var(--muted)] tabular-nums" style={{ gridTemplateColumns: `repeat(${TIMELINE_WEEKS}, 1fr)` }} aria-hidden="true">
+      <div className="mt-2 grid text-[0.625rem] text-[var(--muted)] tabular-nums" style={{ gridTemplateColumns: `repeat(${TIMELINE_WEEKS}, 1fr)` }} aria-hidden="true">
         {Array.from({ length: TIMELINE_WEEKS }, (_, i) => (
           <span key={i} className="text-right">
             {i + 1 === 1 || (i + 1) % 2 === 0 ? `W${i + 1}` : ""}
@@ -86,7 +86,7 @@ export function InteractiveNeeds() {
   };
 
   return (
-    <section id="solutions" className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <section id="solutions" className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <SectionHeading
         eyebrow="Solutions"
         title="Start with the problem, not the technology"
@@ -97,14 +97,14 @@ export function InteractiveNeeds() {
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,19rem)_1fr] gap-4 sm:gap-6">
           {/* Problem picker */}
           <div>
-            <p className="px-1 mb-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
+            <p className="px-1 mb-3 text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
               I want to&hellip;
             </p>
             <div
               role="tablist"
               aria-label="What do you need help with?"
               aria-orientation="vertical"
-              className="grid grid-cols-2 lg:grid-cols-1 gap-2"
+              className="no-scrollbar -mx-4 px-4 sm:-mx-6 sm:px-6 flex gap-2 overflow-x-auto snap-x md:mx-0 md:px-0 md:grid md:grid-cols-2 lg:grid-cols-1 md:overflow-visible"
             >
               {items.map((item, i) => {
                 const isActive = item.id === activeId;
@@ -120,23 +120,26 @@ export function InteractiveNeeds() {
                     aria-selected={isActive}
                     aria-controls="need-panel"
                     tabIndex={isActive ? 0 : -1}
-                    onClick={() => setActiveId(item.id)}
+                    onClick={(e) => {
+                      setActiveId(item.id);
+                      e.currentTarget.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+                    }}
                     onKeyDown={(e) => handleKeyDown(e, i)}
-                    className={`group relative text-left rounded-xl border px-3.5 py-3 lg:px-4 lg:py-3.5 transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--terracotta)] ${
+                    className={`group relative shrink-0 snap-start text-left rounded-full md:rounded-xl border px-4 py-2.5 md:px-3.5 md:py-3 lg:px-4 lg:py-3.5 transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--terracotta)] ${
                       isActive
-                        ? "bg-[var(--surface)] border-[var(--line)] shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_6px_16px_rgba(31,31,28,0.08)]"
-                        : "bg-[var(--surface)]/45 border-transparent hover:bg-[var(--surface)]/80"
+                        ? "bg-[var(--ink)] border-[var(--ink)] md:bg-[var(--surface)] md:border-[var(--line)] md:shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_6px_16px_rgba(31,31,28,0.08)]"
+                        : "bg-[var(--surface)]/60 border-[var(--line)] md:bg-[var(--surface)]/45 md:border-transparent hover:bg-[var(--surface)]/80"
                     }`}
                   >
                     <span
-                      className={`absolute left-0 top-3 bottom-3 w-[3px] rounded-r-full transition-colors ${
+                      className={`hidden md:block absolute left-0 top-3 bottom-3 w-[0.1875rem] rounded-r-full transition-colors ${
                         isActive ? "bg-[var(--terracotta)]" : "bg-transparent"
                       }`}
                       aria-hidden="true"
                     />
                     <span className="flex items-center gap-3">
                       <span
-                        className={`hidden sm:inline font-mono text-[11px] tabular-nums ${
+                        className={`hidden md:inline font-mono text-[0.6875rem] tabular-nums ${
                           isActive ? "text-[var(--terracotta)]" : "text-[var(--muted)]/70"
                         }`}
                       >
@@ -144,8 +147,8 @@ export function InteractiveNeeds() {
                       </span>
                       <span className="flex-1 min-w-0">
                         <span
-                          className={`block text-sm lg:text-[15px] font-semibold leading-snug ${
-                            isActive ? "text-[var(--ink)]" : "text-[var(--ink)]/75"
+                          className={`block whitespace-nowrap md:whitespace-normal text-sm lg:text-[0.9375rem] font-semibold leading-snug ${
+                            isActive ? "text-[var(--surface)] md:text-[var(--ink)]" : "text-[var(--ink)]/75"
                           }`}
                         >
                           {item.chipLabel}
@@ -170,11 +173,11 @@ export function InteractiveNeeds() {
             className="clay-card overflow-hidden flex flex-col"
           >
             <div className="flex items-center justify-between gap-3 px-5 sm:px-8 py-3 border-b border-[var(--line)] bg-[var(--bg)]/45">
-              <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
+              <span className="inline-flex items-center gap-2 text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
                 <span className="w-2 h-2 rounded-full bg-[var(--terracotta)]" aria-hidden="true" />
                 Project brief
               </span>
-              <span className="font-mono text-[11px] text-[var(--muted)] tabular-nums">
+              <span className="font-mono text-[0.6875rem] text-[var(--muted)] tabular-nums">
                 No. {String(activeIndex + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}
               </span>
             </div>
@@ -196,12 +199,12 @@ export function InteractiveNeeds() {
                 </h3>
                 <p className="mt-3 text-base text-[var(--muted)] leading-relaxed max-w-2xl">{active.description}</p>
 
-                <h4 className="mt-7 mb-3 font-sans text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
+                <h4 className="mt-7 mb-3 font-sans text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
                   Usually included
                 </h4>
-                <ol className="grid grid-cols-1 sm:grid-cols-2 gap-px rounded-xl overflow-hidden border border-[var(--line)] bg-[var(--line)]">
+                <ol className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-px md:rounded-xl md:overflow-hidden md:border md:border-[var(--line)] md:bg-[var(--line)]">
                   {active.included.map((bullet, idx) => (
-                    <li key={bullet} className="flex items-start gap-3 p-3.5 sm:p-4 bg-[var(--surface)]">
+                    <li key={bullet} className="flex items-start gap-3 md:p-4 md:bg-[var(--surface)]">
                       <span className="w-6 h-6 shrink-0 rounded-md bg-[var(--sage)]/25 text-[#5E7356] flex items-center justify-center">
                         <Check className="w-3.5 h-3.5" strokeWidth={2.25} aria-hidden="true" />
                       </span>

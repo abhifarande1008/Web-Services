@@ -30,7 +30,7 @@ export function SectionHeading({ eyebrow, title, intro, align = "split" }: Secti
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-10 lg:items-end mb-12 sm:mb-16">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 md:gap-4 lg:gap-10 lg:items-end mb-8 md:mb-16">
       <div className="lg:col-span-7">
         <Reveal y={12}>
           <p className="flex items-center gap-3 text-sm font-medium text-[var(--terracotta)] mb-3">
@@ -44,7 +44,7 @@ export function SectionHeading({ eyebrow, title, intro, align = "split" }: Secti
       </div>
       {intro && (
         <Reveal delay={0.3} y={20} blur className="lg:col-span-5">
-          <p className="text-base sm:text-lg text-[var(--muted)] leading-relaxed">{intro}</p>
+          <p className="text-[0.9375rem] sm:text-lg text-[var(--muted)] leading-relaxed">{intro}</p>
         </Reveal>
       )}
     </div>

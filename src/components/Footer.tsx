@@ -15,12 +15,12 @@ export function Footer() {
   const watermarkOpacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   return (
-    <footer ref={ref} className="footer-reveal relative overflow-hidden bg-[var(--ink)] text-[var(--surface)] px-4 sm:px-6 lg:px-8 pt-20 pb-10">
+    <footer ref={ref} className="footer-reveal relative overflow-hidden bg-[var(--ink)] text-[var(--surface)] px-4 sm:px-6 lg:px-8 pt-16 md:pt-20 pb-10">
       <div className="relative z-10 max-w-7xl mx-auto">
         {/* Closing call to action */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-14 border-b border-white/10">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-12 md:pb-14 border-b border-white/10">
           <div>
-            <p className="flex items-center gap-2 font-sans text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--sage)]">
+            <p className="flex items-center gap-2 font-sans text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-[var(--sage)]">
               <span className="w-2 h-2 rounded-full bg-[var(--sage)]" aria-hidden="true" />
               {brand.availability}
             </p>
@@ -41,8 +41,8 @@ export function Footer() {
           </Magnetic>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 py-14">
-          <div className="sm:col-span-2 flex flex-col">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-x-6 gap-y-10 md:gap-10 py-12 md:py-14">
+          <div className="col-span-2 flex flex-col">
             <div className="flex items-center gap-3 mb-4">
               <span className="w-9 h-9 shrink-0 rounded-lg bg-[var(--surface)] text-[var(--ink)] flex items-center justify-center font-serif text-base" aria-hidden="true">
                 {brand.monogram}
@@ -71,7 +71,7 @@ export function Footer() {
 
           {footer.columns.map((col) => (
             <nav key={col.title} aria-label={col.title} className="flex flex-col gap-3">
-              <span className="font-sans text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--surface)]/45 mb-1">
+              <span className="font-sans text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-[var(--surface)]/45 mb-1">
                 {col.title}
               </span>
               <Stagger as="ul" stagger={0.05} className="flex flex-col gap-2.5">

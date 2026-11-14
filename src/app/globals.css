@@ -28,10 +28,18 @@
 /* Base styles */
 html {
   scroll-behavior: smooth;
-  /* Keeps anchor targets clear of the fixed 80px navbar. */
-  scroll-padding-top: 88px;
+  /* Keeps anchor targets clear of the fixed navbar (h-20). */
+  scroll-padding-top: 5.5rem;
   background-color: #EAE1D2;
   color: #1F1F1C;
+}
+
+/* Past 1440px the whole layout scales with the window instead of sitting small in the middle.
+   Sizes are in rem, so they all follow; breakpoints are unaffected (media queries use the default 16px). */
+@media (min-width: 1440px) {
+  html {
+    font-size: calc(100vw / 90);
+  }
 }
 
 body {
@@ -54,7 +62,7 @@ body {
 @layer components {
 .clay-card {
   background-color: var(--surface);
-  border-radius: 16px;
+  border-radius: 1rem;
   border: 1px solid var(--line);
   box-shadow:
     inset 0 1px 0 0 rgba(255, 255, 255, 0.95),
@@ -78,13 +86,13 @@ body {
 .btn-primary {
   background-color: var(--terracotta);
   color: var(--surface);
-  border-radius: 12px;
-  padding: 12px 24px;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1.5rem;
   font-weight: 500;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 0.5rem;
   border: 1px solid rgba(0, 0, 0, 0.05);
   box-shadow: 
     inset 0 1px 0 rgba(255, 255, 255, 0.25),
@@ -112,13 +120,13 @@ body {
 .btn-secondary {
   background-color: transparent;
   color: var(--ink);
-  border-radius: 12px;
-  padding: 12px 24px;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1.5rem;
   font-weight: 500;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 0.5rem;
   border: 1px solid var(--ink);
   transition: background-color 0.15s ease, transform 0.15s ease;
 }
@@ -130,6 +138,35 @@ body {
 
 .btn-secondary:active {
   transform: translateY(1px);
+}
+
+/* Phones: drop card chrome so content sits directly on the page. Must stay after .clay-card. */
+@media (max-width: 767.98px) {
+  .flat-mobile {
+    background-color: transparent;
+    background-image: none;
+    border-color: transparent;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
+/* Dotted surface behind section compositions, only where there is room for it. */
+@media (min-width: 768px) {
+  .workbench-surface {
+    border-radius: 1.75rem;
+    border: 1px solid var(--line);
+    background-color: rgba(227, 217, 200, 0.55);
+    background-image: radial-gradient(rgba(31, 31, 28, 0.09) 1px, transparent 1px);
+    background-size: 1.125rem 1.125rem;
+  }
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 }
 
@@ -224,8 +261,8 @@ html.lenis {
   .page-curtain {
     position: relative;
     z-index: 10;
-    border-bottom-left-radius: 48px;
-    border-bottom-right-radius: 48px;
+    border-bottom-left-radius: 3rem;
+    border-bottom-right-radius: 3rem;
     box-shadow: 0 40px 80px -30px rgba(31, 31, 28, 0.45);
   }
   .footer-reveal {

@@ -110,7 +110,7 @@ export function MockUI({ type, className = "" }: MockUIProps) {
       )}
 
       {type === "api" && (
-        <div className="flex flex-col gap-1.5 font-mono text-[9px]">
+        <div className="flex flex-col gap-1.5 font-mono text-[0.5625rem]">
           <div className="flex items-center gap-1.5">
             <span className="px-1 py-0.5 rounded bg-[var(--sage)]/40 text-[var(--ink)]">POST</span>
             <div className="h-2 w-16 rounded bg-[var(--line)]" />

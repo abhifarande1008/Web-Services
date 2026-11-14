@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import Lenis from "lenis";
 import { MotionConfig } from "framer-motion";
-import { NAV_OFFSET } from "@/lib/scroll";
+import { navOffset } from "@/lib/scroll";
 
 export function MotionProvider({ children }: { children: React.ReactNode }) {
   // Inertial smooth scrolling for mouse wheels; touch devices keep native scrolling.
@@ -12,7 +12,7 @@ export function MotionProvider({ children }: { children: React.ReactNode }) {
     const lenis = new Lenis({
       autoRaf: true,
       lerp: 0.09,
-      anchors: { offset: -NAV_OFFSET },
+      anchors: { offset: -navOffset() },
       stopInertiaOnNavigate: true,
     });
     window.__lenis = lenis;

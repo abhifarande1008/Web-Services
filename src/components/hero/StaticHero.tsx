@@ -51,7 +51,7 @@ export function StaticHero() {
           initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1, ease: smoothEase }}
-          className="font-serif text-4xl sm:text-6xl md:text-7xl lg:text-[76px] font-normal tracking-tight text-[var(--ink)] leading-[1.08] max-w-4xl"
+          className="font-serif text-4xl sm:text-6xl md:text-7xl lg:text-[4.75rem] font-normal tracking-tight text-[var(--ink)] leading-[1.08] max-w-4xl"
         >
           {siteConfig.hero.headline}
         </motion.h1>

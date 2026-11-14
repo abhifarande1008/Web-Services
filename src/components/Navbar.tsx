@@ -74,7 +74,7 @@ export function Navbar() {
             </span>
           </div>
           <div className="flex flex-col min-w-0">
-            <span className="font-serif text-[15px] sm:text-base leading-tight font-semibold tracking-normal text-[var(--ink)] truncate">
+            <span className="font-serif text-[0.9375rem] sm:text-base leading-tight font-semibold tracking-normal text-[var(--ink)] truncate">
               {siteConfig.brand.name}
             </span>
             <span className="text-xs text-[var(--muted)] truncate">
@@ -157,7 +157,7 @@ export function Navbar() {
 
       {/* Reading progress */}
       <motion.span
-        className="absolute left-0 right-0 bottom-0 h-[2px] bg-[var(--terracotta)] origin-left"
+        className="absolute left-0 right-0 bottom-0 h-[0.125rem] bg-[var(--terracotta)] origin-left"
         style={{ scaleX: progress, opacity: isScrolled ? 1 : 0 }}
         aria-hidden="true"
       />

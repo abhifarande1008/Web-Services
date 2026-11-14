@@ -54,7 +54,7 @@ export function TechStack() {
   ];
 
   return (
-    <section id="tech-stack" className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <section id="tech-stack" className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <SectionHeading
         eyebrow="Technology"
         title="What we build with"
@@ -63,14 +63,26 @@ export function TechStack() {
 
       <Workbench>
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] gap-6 lg:gap-10 items-center">
+          <Stagger as="ul" stagger={0.05} className="md:hidden order-1 grid grid-cols-2 gap-x-6">
+            {items.map((t) => (
+              <StaggerItem as="li" key={t.name} y={10} className="flex items-start gap-2.5 py-3 border-t border-[var(--line)]">
+                <span className="mt-1.5 w-1.5 h-1.5 shrink-0 rounded-full bg-[var(--terracotta)]" aria-hidden="true" />
+                <span className="min-w-0">
+                  <span className="block text-sm font-semibold text-[var(--ink)] leading-tight">{t.name}</span>
+                  <span className="block mt-0.5 text-xs text-[var(--muted)]">{t.category}</span>
+                </span>
+              </StaggerItem>
+            ))}
+          </Stagger>
+
           <Stagger
             as="ul"
             stagger={0.12}
             delay={0.3}
-            className="flex flex-col gap-px rounded-2xl overflow-hidden border border-[var(--line)] bg-[var(--line)] order-2 lg:order-1"
+            className="flex flex-col md:gap-px md:rounded-2xl md:overflow-hidden md:border md:border-[var(--line)] md:bg-[var(--line)] order-2 lg:order-1"
           >
             {points.map((p, i) => (
-              <StaggerItem as="li" key={p.title} y={0} x={-24} className="bg-[var(--surface)] p-5 grid grid-cols-[2rem_1fr] gap-2">
+              <StaggerItem as="li" key={p.title} y={0} x={-24} className="py-4 border-t border-[var(--line)] md:border-t-0 md:bg-[var(--surface)] md:p-5 grid grid-cols-[2rem_1fr] gap-2">
                 <span className="font-mono text-xs text-[var(--terracotta)] pt-0.5">{String(i + 1).padStart(2, "0")}</span>
                 <div>
                   <h3 className="font-sans text-sm font-semibold text-[var(--ink)]">{p.title}</h3>
@@ -80,7 +92,7 @@ export function TechStack() {
             ))}
           </Stagger>
 
-          <Tilt max={4} className="order-1 lg:order-2 min-w-0">
+          <Tilt max={4} className="hidden md:block order-1 lg:order-2 min-w-0">
           <div className="rounded-2xl overflow-hidden bg-[#1F1F1C] border border-black/40 shadow-[0_24px_48px_-20px_rgba(31,31,28,0.55)]">
             <div className="flex items-center gap-2 px-4 h-10 border-b border-white/10 bg-[#262622]">
               <span className="flex gap-1.5" aria-hidden="true">
@@ -88,10 +100,10 @@ export function TechStack() {
                 <span className="w-2.5 h-2.5 rounded-full bg-[#E3B45C]/80" />
                 <span className="w-2.5 h-2.5 rounded-full bg-[#7FB069]/80" />
               </span>
-              <span className="ml-3 px-3 py-1 rounded-t-md bg-[#1F1F1C] text-[11px] font-mono text-[#D8D2C6] border border-b-0 border-white/10 -mb-[9px]">
+              <span className="ml-3 px-3 py-1 rounded-t-md bg-[#1F1F1C] text-[0.6875rem] font-mono text-[#D8D2C6] border border-b-0 border-white/10 -mb-[0.5625rem]">
                 stack.json
               </span>
-              <span className="ml-auto hidden sm:inline-flex items-center gap-2 font-sans text-[10px] font-semibold uppercase tracking-[0.14em] text-[#B9C9AF]">
+              <span className="ml-auto hidden sm:inline-flex items-center gap-2 font-sans text-[0.625rem] font-semibold uppercase tracking-[0.14em] text-[#B9C9AF]">
                 <span className="w-1.5 h-1.5 rounded-full bg-[var(--sage)]" aria-hidden="true" />
                 Read only
               </span>
@@ -104,7 +116,7 @@ export function TechStack() {
                 </li>
               ))}
             </ul>
-            <pre className="overflow-x-auto py-4 text-[12.5px] sm:text-[13px] leading-6 font-mono" aria-hidden="true">
+            <pre className="overflow-x-auto py-4 text-[0.78125rem] sm:text-[0.8125rem] leading-6 font-mono" aria-hidden="true">
               <motion.code
                 className="grid grid-cols-[2.75rem_1fr]"
                 initial="hidden"
@@ -129,7 +141,7 @@ export function TechStack() {
                     >
                       {line}
                       {i === lines.length - 1 && (
-                        <span className="caret-blink inline-block w-[7px] h-[1.1em] ml-1 align-[-0.2em] bg-[#E8A27F]" />
+                        <span className="caret-blink inline-block w-[0.4375rem] h-[1.1em] ml-1 align-[-0.2em] bg-[#E8A27F]" />
                       )}
                     </motion.span>
                   </React.Fragment>
@@ -137,7 +149,7 @@ export function TechStack() {
               </motion.code>
             </pre>
 
-            <div className="flex items-center justify-between px-4 h-7 bg-[var(--terracotta)] text-[var(--surface)] font-mono text-[10.5px]">
+            <div className="flex items-center justify-between px-4 h-7 bg-[var(--terracotta)] text-[var(--surface)] font-mono text-[0.65625rem]">
               <span>main</span>
               <span>JSON · UTF-8</span>
             </div>
